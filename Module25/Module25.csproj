@@ -11,4 +11,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Task_25_2_4\BLL\" />
+    <Folder Include="Task_25_2_4\DAL\Repositories\" />
+  </ItemGroup>
+
 </Project>
