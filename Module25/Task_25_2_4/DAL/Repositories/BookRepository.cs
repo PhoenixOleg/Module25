@@ -16,7 +16,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// <returns>Экземпляр класса BookEntity</returns>
         public BookEntity GetBookByID(int id)
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 BookEntity? BookEntity = db.Books.Where(Book => Book.Id == id).FirstOrDefault();
                 return BookEntity;
@@ -29,7 +29,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// <returns>Список экземпляров класса BookEntity</returns>
         public List<BookEntity> GetAllBook()
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 List<BookEntity> BookEntitys = db.Books.ToList();
                 return BookEntitys;
@@ -44,7 +44,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// 0 - книга не добавлена</returns>
         public int AddBook(BookEntity BookEntity)
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 db.Add(BookEntity);
                 return db.SaveChanges();
@@ -59,7 +59,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// 0 - книга не удалена</returns>
         public int DeleteBook(BookEntity BookEntity)
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 db.Remove(BookEntity);
                 return db.SaveChanges();
@@ -75,7 +75,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// -1 - книга не найдена по id</returns>
         public int DeleteBook(int id)
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 BookEntity? BookEntity = GetBookByID(id);
                 if (BookEntity != null)
@@ -100,7 +100,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// -1 - книга не найдена по id</returns>
         public int UpdateBookNameByID(int id, DateOnly publicationDate)
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 BookEntity? BookEntity = GetBookByID(id);
                 if (BookEntity != null)

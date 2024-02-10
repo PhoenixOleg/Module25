@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Module25.BLL.Models;
-using Module25.Task_25_2_4.DAL.Entities;
+using Module25.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,21 +8,27 @@ using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-namespace Module25.Task_25_2_4.DAL
+namespace Module25.DAL
 {
-    public class MyDBContext : DbContext
+    public class ExtendedDBContext : DbContext
     {
         // Объекты таблицы Users
-        public DbSet<UserEntity> Users { get; set; }
+        public DbSet<UserExtendedEntity> Users { get; set; }
 
         // Объекты таблицы Books
-        public DbSet<BookEntity> Books { get; set; }
+        public DbSet<BookExtendedEntity> Books { get; set; }
 
-        public MyDBContext(bool reCreatedDB)
+        // Объекты таблицы Author
+        public DbSet<AuthorEntity> Authors { get; set; }
+
+        // Объекты таблицы Genres
+        public DbSet<GenreEntity> Genres { get; set; }
+
+        public ExtendedDBContext(bool reCreatedDB)
         {
             if (reCreatedDB)
             {
-                Database.EnsureDeleted(); //Чтобы можно было выполнить первое задание после "старших" заданий
+                Database.EnsureDeleted(); //Чтобы не убивать данные
             }
             
             Database.EnsureCreated();
@@ -34,7 +40,7 @@ namespace Module25.Task_25_2_4.DAL
         /// </summary>
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<UserEntity>()
+            builder.Entity<UserExtendedEntity>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
         }

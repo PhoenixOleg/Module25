@@ -18,7 +18,7 @@ namespace Module25.PLL.Views
             {
                 Console.WriteLine("Выполнить задание 25.2.4 - первая БД (нажмите 1)");
                 Console.WriteLine("Выполнить задание 25.3.5 - просто CRUD (нажмите 2)");
-                Console.WriteLine("Следующее задание (нажмите 3)");
+                Console.WriteLine("Выполнить задание 25.4.3 - расширение БД (нажмите 3)");
                 Console.WriteLine("Следующее задание (нажмите 4)");
                 Console.WriteLine("Завершить работу (нажмите 0)");
 
@@ -42,7 +42,7 @@ namespace Module25.PLL.Views
                     case "3":
                         {
                             Console.Clear();
-
+                            CreationExtenedDBView.Show();
                             break;
                         }
 
