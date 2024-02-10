@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Module25.Task_25_2_4.DAL.Entities
 {
-    public class User
+    public class UserEntity
     {
         public int Id { get; set; } //PrimaryKey
         [Required]

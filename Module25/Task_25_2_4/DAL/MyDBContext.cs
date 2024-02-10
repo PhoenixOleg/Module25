@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Module25.BLL.Models;
 using Module25.Task_25_2_4.DAL.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,15 +13,30 @@ namespace Module25.Task_25_2_4.DAL
     public class MyDBContext : DbContext
     {
         // Объекты таблицы Users
-        public DbSet<User> Users { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
 
         // Объекты таблицы Books
-        public DbSet<Book> Books { get; set; }
+        public DbSet<BookEntity> Books { get; set; }
 
-        public MyDBContext()
+        public MyDBContext(bool reCreatedDB)
         {
-            Database.EnsureDeleted();
+            if (reCreatedDB)
+            {
+                Database.EnsureDeleted(); //Чтобы можно было выполнить первое задание после "старших" заданий
+            }
+            
             Database.EnsureCreated();
+        }
+
+        /// <summary>
+        /// Метод для задания ограничения уникальности на поле Email через FluentAPI
+        /// Создает некластаризованный индекс с ограничением на уникальность
+        /// </summary>
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<UserEntity>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

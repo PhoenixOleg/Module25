@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace Module25.Task_25_2_4.DAL.Entities
 {
-    public class Book
+    public class BookEntity
     {
         public int Id { get; set; } //PrimaryKey
         [Required]
         public string Title { get; set; } //Not NULL
         public string? Description { get; set; } // Может быть NULL
         //[Column(TypeName = "date")] //Явно указываю тип данных столбца. Хранить время там не надо. Заменено на тип DateOnly
-        public DateOnly PublicationDate { get; set; }
+        public DateOnly PublicationDate { get; set; } //Выбран тип данных Date, а не int или char(4), чтобы можно было выбирать по критериям "новинки месяца" и т. п.
     }
 }
