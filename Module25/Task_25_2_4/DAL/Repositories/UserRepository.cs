@@ -18,7 +18,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// <returns>Экземпляр класса UserEntity</returns>
         public UserEntity GetUserByID(int id) 
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 UserEntity? userEntity = db.Users.Where(user => user.Id == id).FirstOrDefault();
                 return userEntity;
@@ -31,7 +31,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// <returns>Список экземпляров класса UserEntity</returns>
         public List<UserEntity> GetAllUser()
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 List<UserEntity> userEntitys = db.Users.ToList();
                 return userEntitys;
@@ -46,7 +46,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// 0 - пользователь не добавлен</returns>
         public int AddUser(UserEntity userEntity)
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 db.Add(userEntity);
                 return db.SaveChanges();
@@ -61,7 +61,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// 0 - пользователь не удален</returns>
         public int DeleteUser(UserEntity userEntity) 
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 db.Remove(userEntity);
                 return db.SaveChanges();
@@ -77,7 +77,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// -1 - не найден пользователь по id</returns>
         public int DeleteUser(int id)
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 UserEntity? userEntity = GetUserByID(id);
                 if (userEntity != null)
@@ -102,7 +102,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// -1 - не найден пользователь по id</returns>
         public int UpdateUserNameByID(int id, string name)
         {
-            using (var db = new MyDBContext(false))
+            using (var db = new BeginerDBContext(false))
             {
                 UserEntity? userEntity = GetUserByID(id);
                 if (userEntity != null)

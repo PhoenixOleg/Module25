@@ -14,7 +14,7 @@ namespace Module25.Task_25_2_4.BLL
         {
             try
             {
-                using (var db = new MyDBContext(true))
+                using (var db = new BeginerDBContext(true))
                 {
                     var user1 = new UserEntity { Name = "User1", Email = "user1@gmail.com" };
                     var user2 = new UserEntity { Name = "User2", Email = "user2@gmail.com" };
