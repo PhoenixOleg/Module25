@@ -1,5 +1,7 @@
 ﻿using Module25.BLL.Exceptions;
 using Module25.BLL.Models;
+using Module25.DAL.Entities;
+using Module25.DAL.Repositories;
 using Module25.Task_25_2_4.DAL.Entities;
 using Module25.Task_25_2_4.DAL.Repositories;
 using System;
@@ -124,6 +126,86 @@ namespace Module25.BLL.Services
                         throw new Exception();
                     }
             }
+        }
+
+        public void GiveBookToUser(User user, Book book)
+        {
+            if (user == null)
+            {
+                throw new NullReferenceException("Клиент не выбран");
+            }
+
+            if (book == null)
+            {
+                throw new NullReferenceException("Книга не выбрана");
+            }
+
+            if (book.Users.Where(u => u.Id == user.Id).Any())
+            {
+                throw new AlreadyExistsException();
+            }
+
+            UserExtendedEntity userExtendedEntity = new()
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email
+            };
+
+            BookExtendedEntity bookExtendedEntity = new()
+            {
+                Id = book.Id,
+                Description = book.Description,
+                PublicationDate = book.PublicationDate,
+                Title = book.Title,
+                Users = new() 
+            };
+
+
+            if (userRepository.GiveBookToUser(userExtendedEntity, bookExtendedEntity) == 0)
+            {
+                throw new Exception();
+            }
+        }
+
+        public void GetBookFromUser(User user, Book book)
+        {
+            if (user == null)
+            {
+                throw new NullReferenceException("Клиент не выбран");
+            }
+
+            if (book == null)
+            {
+                throw new NullReferenceException("Книга не выбрана");
+            }
+
+            if (!book.Users.Where(u => u.Id == user.Id).Any()) //Читатель не существует в книге
+            {
+                throw new ObjectNotFoundException();
+            }
+
+            UserExtendedEntity userExtendedEntity = new()
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email
+            };
+
+            BookExtendedEntity bookExtendedEntity = new()
+            {
+                Id = book.Id,
+                Description = book.Description,
+                PublicationDate = book.PublicationDate,
+                Title = book.Title,
+                Users = new()
+            };
+
+            if (userRepository.GetBookFromUser(userExtendedEntity, bookExtendedEntity) == 0)
+            {
+                throw new Exception();
+            }
+
         }
 
         public User ConstructUserModel(UserEntity userEntity)

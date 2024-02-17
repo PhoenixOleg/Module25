@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Module25.DAL.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,14 @@ namespace Module25.BLL.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+
+        public List<BookExtendedEntity>? Books { get; set; }
+
+        public Genre(int id, string name, List<BookExtendedEntity>? books)
+        {
+            Id = id;
+            Name = name;
+            Books = books;
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace Module25.DAL
                 Database.EnsureDeleted(); //Чтобы не убивать данные
             }
             
-            Database.EnsureCreated();
+            Database.EnsureCreated();            
         }
 
         /// <summary>
@@ -48,6 +48,7 @@ namespace Module25.DAL
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=WIN-ACL07JRD9H1\SQLEXPRESS;TrustServerCertificate=True;Trusted_Connection=false;Database=HomeWork;User ID=sa;Password=1q2W3e4R");
+            //optionsBuilder.EnableSensitiveDataLogging(true);
         }
     }
 }

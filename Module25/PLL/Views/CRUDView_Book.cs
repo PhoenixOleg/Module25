@@ -144,7 +144,7 @@ namespace Module25.PLL.Views
                                 do
                                 {
                                     Console.Write("Вы уверены, что хотите удалить эту книгу? (Y/N) ");
-                                    switch (Console.ReadLine().ToUpper())
+                                    switch (Console.ReadLine()?.ToUpper())
                                     {
                                         case "Y":
                                             {
@@ -152,7 +152,7 @@ namespace Module25.PLL.Views
                                                 try
                                                 {
                                                     bookService.RemoveBook(selectedBook);
-                                                    SuccessMessage.Show("Книга " + selectedBook.Title + " успешно удалена");
+                                                    SuccessMessage.Show("Книга " + selectedBook?.Title + " успешно удалена");
                                                     selectedBook = null;
                                                 }
                                                 catch (NoOneObjectException)
@@ -228,7 +228,6 @@ namespace Module25.PLL.Views
                         {
                             bool flag;
                             int id;
-                            string title;
                             DateOnly publicationDate;
 
                             do

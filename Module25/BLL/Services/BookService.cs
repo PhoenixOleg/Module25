@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Module25.BLL.Exceptions;
 using Module25.BLL.Models;
+using Module25.DAL.Entities;
 using Module25.Task_25_2_4.DAL.Entities;
 using Module25.Task_25_2_4.DAL.Repositories;
 using System;
@@ -14,77 +15,106 @@ namespace Module25.BLL.Services
 {
     public class BookService
     {
-        BookRepository BookRepository;
+        BookRepository bookRepository;
 
         public BookService()
         {
-            BookRepository = new BookRepository();
+            bookRepository = new BookRepository();
         }
 
         public List<Book> ShowAll()
         {
-            List<Book> BooksList = new();
+            List<Book> booksList = new();
 
-            List<BookEntity> findBooks = BookRepository.GetAllBook();
+            List<BookEntity> findBooks = bookRepository.GetAllBooks();
             if (findBooks.Count == 0)
             {
                 throw new NoOneObjectException();
             }
             else
             {
-                foreach (BookEntity BookEntity in findBooks)
+                foreach (BookEntity bookEntity in findBooks)
                 {
-                    BooksList.Add(ConstructBookModel(BookEntity));
+                    booksList.Add(ConstructBookModel(bookEntity));
                 }
             }
 
-            return BooksList;
+            return booksList;
+        }
+
+        public List<Book> ShowAll_Extended()
+        {
+            List<Book> booksList = new();
+
+            List<BookExtendedEntity> findBooks = bookRepository.GetAllBooks_Extended();
+            if (findBooks.Count == 0)
+            {
+                throw new NoOneObjectException();
+            }
+            else
+            {
+                foreach (BookExtendedEntity bookExtendedEntity in findBooks)
+                {
+                    booksList.Add(ConstructBookModel_Extended(bookExtendedEntity));
+                }
+            }
+
+            return booksList;
         }
 
         public Book ShowByID(int id)
         {
-            BookEntity findBook = BookRepository.GetBookByID(id);
+            BookEntity findBook = bookRepository.GetBookByID(id);
             if (findBook == null)
             { throw new ObjectNotFoundException(); }
 
             return ConstructBookModel(findBook);
         }
 
-        public void AddBook(BookAddingData BookAddingData)
+        public Book ShowByID_Extended(int id)
         {
-            if (string.IsNullOrEmpty(BookAddingData.Title) || string.IsNullOrWhiteSpace(BookAddingData.Title))
+            BookExtendedEntity findBook = bookRepository.GetBookByID_Extended(id);
+            if (findBook == null)
+            { throw new ObjectNotFoundException(); }
+
+            return ConstructBookModel_Extended(findBook);
+        }
+
+        public void AddBook(BookAddingData bookAddingData)
+        {
+            if (string.IsNullOrEmpty(bookAddingData.Title) || string.IsNullOrWhiteSpace(bookAddingData.Title))
             {
                 throw new NameEmptyException();
             }
 
-            if (BookAddingData.PublicationDate.CompareTo(DateOnly.FromDateTime(DateTime.Now)) > 0) //Только на превышение текушего года. Допустим в библиотеке есть оцифрованные старые книги)
+            if (bookAddingData.PublicationDate.CompareTo(DateOnly.FromDateTime(DateTime.Now)) > 0) //Только на превышение текушего года. Допустим в библиотеке есть оцифрованные старые книги)
             {
                 throw new DateOutOfRangeException();
             }
 
-            BookEntity BookEntity = new()
+            BookEntity bookEntity = new()
             {
-                Title = BookAddingData.Title
-                , Description = BookAddingData.Description
-                , PublicationDate = BookAddingData.PublicationDate
+                Title = bookAddingData.Title
+                , Description = bookAddingData.Description
+                , PublicationDate = bookAddingData.PublicationDate
             };
 
-            if (BookRepository.AddBook(BookEntity) == 0)
+            if (bookRepository.AddBook(bookEntity) == 0)
             {
                 throw new Exception();
             }
         }
 
-        public void RemoveBook(Book? Book)
+        public void RemoveBook(Book? book)
         {
-            if (Book == null)
+            if (book == null)
             {
                 throw new NoOneObjectException();
             }
 
-            BookEntity BookEntity = ConvertToBookEntity(Book);
+            BookEntity bookEntity = ConvertToBookEntity(book);
 
-            if (BookRepository.DeleteBook(BookEntity) == 0)
+            if (bookRepository.DeleteBook(bookEntity) == 0)
             {
                 throw new Exception();
             }
@@ -92,7 +122,7 @@ namespace Module25.BLL.Services
 
         public void RemoveBook(int id)
         {
-            switch (BookRepository.DeleteBook(id))
+            switch (bookRepository.DeleteBook(id))
             {
                 case -1:
                     {
@@ -112,7 +142,7 @@ namespace Module25.BLL.Services
                 throw new DateOutOfRangeException();
             }
 
-            switch (BookRepository.UpdateBookNameByID(id, publicationDate))
+            switch (bookRepository.UpdateBookNameByID(id, publicationDate))
             {
                 case -1:
                     {
@@ -125,28 +155,40 @@ namespace Module25.BLL.Services
             }
         }
 
-        public Book ConstructBookModel(BookEntity BookEntity)
+        public Book ConstructBookModel(BookEntity bookEntity)
         {
             return new Book(
-                BookEntity.Id,
-                BookEntity.Title,
-                BookEntity.Description,
-                BookEntity.PublicationDate
+                bookEntity.Id,
+                bookEntity.Title,
+                bookEntity.Description,
+                bookEntity.PublicationDate
                 );
         }
 
-        public BookEntity ConvertToBookEntity(Book Book)
+        public Book ConstructBookModel_Extended (BookExtendedEntity bookExtendedEntity)
         {
-            BookEntity BookEntity = new()
+            return new Book(
+                bookExtendedEntity.Id,
+                bookExtendedEntity.Title,
+                bookExtendedEntity.Description,
+                bookExtendedEntity.PublicationDate,
+                bookExtendedEntity.Authors,
+                bookExtendedEntity.Genres,
+                bookExtendedEntity.Users
+                );
+        }
+
+        public BookEntity ConvertToBookEntity(Book book)
+        {
+            BookEntity bookEntity = new()
             {
-                Id = Book.Id,
-                Title = Book.Title,
-                Description = Book.Description,
-                PublicationDate = Book.PublicationDate
+                Id = book.Id,
+                Title = book.Title,
+                Description = book.Description,
+                PublicationDate = book.PublicationDate
             };
 
-            return BookEntity;
+            return bookEntity;
         }
     }
-
 }

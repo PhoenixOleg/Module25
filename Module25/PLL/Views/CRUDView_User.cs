@@ -39,10 +39,10 @@ namespace Module25.PLL.Views
                             {
                                 List<User> users = userService.ShowAll();
 
-                                Console.WriteLine("\n|ID\t|User name\t|e-mail\t|");
+                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
                                 foreach (User item in users)
                                 {
-                                    Console.WriteLine("|{0}\t|{1}\t|{2}\t|", item.Id, item.Name, item.Email);
+                                    Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", item.Id, item.Name, item.Email);
                                 }
                                 Console.WriteLine();
                             }
@@ -69,8 +69,8 @@ namespace Module25.PLL.Views
                             try
                             {
                                 selectedUser = userService.ShowByID(id);
-                                Console.WriteLine("\n|ID\t|User name\t|e-mail\t|");
-                                Console.WriteLine("|{0}\t|{1}\t|{2}\t|", selectedUser.Id, selectedUser.Name, selectedUser.Email);
+                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
+                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", selectedUser.Id, selectedUser.Name, selectedUser.Email);
                                 Console.WriteLine();
                             }
                             catch (ObjectNotFoundException)
@@ -128,15 +128,15 @@ namespace Module25.PLL.Views
                             if (selectedUser != null)
                             {
                                 Console.WriteLine("Выбранный пользователь:");
-                                Console.WriteLine("\n|ID\t|User name\t|e-mail\t|");
-                                Console.WriteLine("|{0}\t|{1}\t|{2}\t|", selectedUser.Id, selectedUser.Name, selectedUser.Email);
+                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
+                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", selectedUser.Id, selectedUser.Name, selectedUser.Email);
                                 Console.WriteLine();
 
                                 bool flag = false;
                                 do
                                 {
                                     Console.Write("Вы уверены, что хотите удалить этого пользователя? (Y/N) ");
-                                    switch (Console.ReadLine().ToUpper())
+                                    switch (Console.ReadLine()?.ToUpper())
                                     {
                                         case "Y":
                                             {
@@ -144,7 +144,7 @@ namespace Module25.PLL.Views
                                                 try
                                                 {
                                                     userService.RemoveUser(selectedUser);
-                                                    SuccessMessage.Show("Пользователь " + selectedUser.Name + " успешно удален");
+                                                    SuccessMessage.Show("Пользователь " + selectedUser?.Name + " успешно удален");
                                                     selectedUser = null;
                                                 }
                                                 catch (NoOneObjectException)

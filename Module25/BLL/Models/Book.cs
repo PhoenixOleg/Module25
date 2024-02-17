@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Module25.DAL.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,12 +15,27 @@ namespace Module25.BLL.Models
         public string? Description { get; set; }
         public DateOnly PublicationDate { get; set; }
 
+        public List<AuthorEntity>? Authors { get; set; }
+        public List<GenreEntity>? Genres { get; set; }
+        public List<UserExtendedEntity>? Users { get; set; }
+
         public Book(int id, string title, string? description, DateOnly publicationDate)
         {
             Id = id;
             Title = title;
             Description = description;
             PublicationDate = publicationDate;
+        }
+
+        public Book(int id, string title, string? description, DateOnly publicationDate, List<AuthorEntity>? authors, List<GenreEntity> genres, List<UserExtendedEntity> users)
+        {
+            Id = id;
+            Title = title;
+            Description = description;
+            PublicationDate = publicationDate;
+            Authors = authors;
+            Genres = genres;
+            Users = users;
         }
     }
 }

@@ -6,6 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Module25.BLL.Exceptions;
 using Module25.BLL.Models;
+using Module25.DAL.Entities;
+using Module25.DAL;
+using Microsoft.EntityFrameworkCore;
 
 namespace Module25.Task_25_2_4.DAL.Repositories
 {
@@ -16,7 +19,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// </summary>
         /// <param name="id">ID пользователя</param>
         /// <returns>Экземпляр класса UserEntity</returns>
-        public UserEntity GetUserByID(int id) 
+        public UserEntity GetUserByID(int id)
         {
             using (var db = new BeginerDBContext(false))
             {
@@ -33,8 +36,8 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         {
             using (var db = new BeginerDBContext(false))
             {
-                List<UserEntity> userEntitys = db.Users.ToList();
-                return userEntitys;
+                List<UserEntity> userEntities = db.Users.ToList();
+                return userEntities;
             }
         }
 
@@ -59,7 +62,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         /// <param name="userEntity">Экземпляр класса UserEntity</param>
         /// <returns>1 - если пользователь удален (количество обработанных строк); 
         /// 0 - пользователь не удален</returns>
-        public int DeleteUser(UserEntity userEntity) 
+        public int DeleteUser(UserEntity userEntity)
         {
             using (var db = new BeginerDBContext(false))
             {
@@ -115,6 +118,38 @@ namespace Module25.Task_25_2_4.DAL.Repositories
                 {
                     return -1;
                 }
+            }
+        }
+
+        public int GiveBookToUser(UserExtendedEntity userExtendedEntity, BookExtendedEntity bookExtendedEntity)
+        {
+            using (var db = new ExtendedDBContext(false))
+            {
+                bookExtendedEntity.Users.Add(userExtendedEntity);
+                db.Update(bookExtendedEntity);
+                return db.SaveChanges();
+            }
+        }
+
+        public int GetBookFromUser(UserExtendedEntity userExtendedEntity, BookExtendedEntity bookExtendedEntity)
+            {
+            using (var db = new ExtendedDBContext(false))
+            {
+                BookExtendedEntity targetBook = db.Books.Include(b => b.Users).Where(b => b.Id == bookExtendedEntity.Id).FirstOrDefault();
+                if (targetBook == null)
+                {
+                    throw new NullReferenceException("Книга не найдена");
+                };
+
+                UserExtendedEntity userForRemove = targetBook.Users.Where(b => b.Id == userExtendedEntity.Id).FirstOrDefault();
+                if (userForRemove == null)
+                {
+                    throw new NullReferenceException("Клиент не найден среди читателей данной книги");
+                };
+
+                targetBook.Users.Remove(userForRemove);
+
+                return db.SaveChanges();
             }
         }
     }
