@@ -80,6 +80,43 @@ namespace Module25.BLL.Services
             return ConstructBookModel_Extended(findBook);
         }
 
+        public int ShowCountBooksByAuthor(AuthorAddingData authorAddingData)
+        {
+            if (string.IsNullOrEmpty(authorAddingData.Name) || string.IsNullOrWhiteSpace(authorAddingData.Name))
+            {
+                throw new NameEmptyException();
+            }
+
+            if (string.IsNullOrEmpty(authorAddingData.Surname) || string.IsNullOrWhiteSpace(authorAddingData.Surname))
+            {
+                throw new NameEmptyException();
+            }
+
+            AuthorEntity authorEntity = new()
+            {
+                Name = authorAddingData.Name,
+                MiddleName = authorAddingData.MiddleName,
+                Surname = authorAddingData.Surname
+            };
+
+            return bookRepository.GetCountBooksByAuthor(authorEntity);
+        }
+
+        public int ShowCountBooksByGenre(GenreAddingData genreAddingData)
+        {
+            if (string.IsNullOrEmpty(genreAddingData.Name) || string.IsNullOrWhiteSpace(genreAddingData.Name))
+            {
+                throw new NameEmptyException();
+            }
+
+            GenreEntity genreEntity = new()
+            {
+                Name = genreAddingData.Name,
+            };
+
+            return bookRepository.GetCountBooksByGenre(genreEntity);
+        }
+
         public void AddBook(BookAddingData bookAddingData)
         {
             if (string.IsNullOrEmpty(bookAddingData.Title) || string.IsNullOrWhiteSpace(bookAddingData.Title))
@@ -95,8 +132,10 @@ namespace Module25.BLL.Services
             BookEntity bookEntity = new()
             {
                 Title = bookAddingData.Title
-                , Description = bookAddingData.Description
-                , PublicationDate = bookAddingData.PublicationDate
+                ,
+                Description = bookAddingData.Description
+                ,
+                PublicationDate = bookAddingData.PublicationDate
             };
 
             if (bookRepository.AddBook(bookEntity) == 0)
@@ -165,7 +204,7 @@ namespace Module25.BLL.Services
                 );
         }
 
-        public Book ConstructBookModel_Extended (BookExtendedEntity bookExtendedEntity)
+        public Book ConstructBookModel_Extended(BookExtendedEntity bookExtendedEntity)
         {
             return new Book(
                 bookExtendedEntity.Id,

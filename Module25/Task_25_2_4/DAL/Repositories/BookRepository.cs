@@ -5,6 +5,7 @@ using Module25.DAL.Entities;
 using Module25.Task_25_2_4.DAL.Entities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -135,6 +136,37 @@ namespace Module25.Task_25_2_4.DAL.Repositories
                 {
                     return -1;
                 }
+            }
+        }
+
+        //public List<BookExtendedEntity> GetBookByAuthor(AuthorEntity authorEntity)
+        //{
+        //    using (var db = new ExtendedDBContext(false))
+        //    {
+        //        List<BookExtendedEntity> bookExtendedEntity = db.Books.Include(b => b.Authors.Where(a => a.Name == authorEntity.Name & a.MiddleName == authorEntity.MiddleName & a.Surname == authorEntity.Surname)).ToList();
+        //        return bookExtendedEntity;
+        //    }
+        //}
+
+        public int GetCountBooksByAuthor(AuthorEntity authorEntity)
+        {
+            using (var db = new ExtendedDBContext(false))
+            {
+                return db.Authors
+                   .Include(b => b.Books)
+                   .Where(a => a.Name == authorEntity.Name && a.MiddleName == authorEntity.MiddleName && a.Surname == authorEntity.Surname)
+                   .Select(b => b.Books.Count).First();
+            }
+        }
+
+        public int GetCountBooksByGenre (GenreEntity genreEntity)
+        {
+            using (var db = new ExtendedDBContext(false))
+            {
+                return db.Genres
+                   .Include(b => b.Books)
+                   .Where(g => g.Name == genreEntity.Name)
+                   .Select(b => b.Books.Count).First();
             }
         }
     }

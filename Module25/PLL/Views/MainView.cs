@@ -20,7 +20,7 @@ namespace Module25.PLL.Views
                 Console.WriteLine("Выполнить задание 25.3.5 - просто CRUD (нажмите 2)");
                 Console.WriteLine("Выполнить задание 25.4.3 - расширение БД (нажмите 3)");
                 Console.WriteLine("Выполнить задание 25.4.3 - работа с жанрами, авторами и получение книг (нажмите 4)");
-                Console.WriteLine("Выполнить задание 25.5.4 (нажмите 5)");
+                Console.WriteLine("Выполнить задание 25.5.4 - Отчеты (нажмите 5)");
                 Console.WriteLine("Завершить работу (нажмите 0)");
 
                 answer = Console.ReadLine();
@@ -58,7 +58,8 @@ namespace Module25.PLL.Views
                         case "5":
                         {
                             Console.Clear();
-                            //@@@
+                            View_Reports view_Reports = new();
+                            view_Reports.Show();
                             break;
                         }
                 }
