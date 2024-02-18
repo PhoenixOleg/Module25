@@ -169,5 +169,16 @@ namespace Module25.Task_25_2_4.DAL.Repositories
                    .Select(b => b.Books.Count).First();
             }
         }
+
+        public bool IsBookByTitleAuthor(AuthorEntity authorEntity, BookEntity bookEntity)
+        {
+            using (var db = new ExtendedDBContext(false))
+            {
+                return db.Authors
+                   .Include(b => b.Books)
+                   .Where(a => a.Name == authorEntity.Name && a.MiddleName == authorEntity.MiddleName && a.Surname == authorEntity.Surname)
+                   .Select(b => b.Books.Where(b => b.Title == bookEntity.Title)).ToList().Any();
+            }
+        }
     }
 }

@@ -127,7 +127,47 @@ namespace Module25.PLL.Views
 
                     case "4": //Есть ли книга определенного автора и с определенным названием в библиотеке
                         {
+                            AuthorAddingData authorAddingData = new();
+                            BookAddingData bookAddingData = new();
 
+                            Console.Write("Введите имя автора: ");
+                            authorAddingData.Name = Console.ReadLine();
+
+                            Console.Write("Введите отчество автора (если есть): ");
+                            authorAddingData.MiddleName = Console.ReadLine();
+
+                            Console.Write("Введите фамилию автора: ");
+                            authorAddingData.Surname = Console.ReadLine();
+
+                            Console.Write("Введите название книги: ");
+                            bookAddingData.Title = Console.ReadLine();
+
+                            try
+                            {
+                                if (bookService.IsBookByTitleAuthor(bookAddingData, authorAddingData))
+                                {
+                                    SuccessMessage.Show("В библиотеке книга этого автора с указанным названием есть!");
+                                }
+                                else
+                                {
+                                    SuccessMessage.Show("В библиотеке книга этого автора с указанным названием отсутствует");
+                                }
+                            }
+                            catch (NameEmptyException)
+                            {
+                                AlertMessage.Show("Имя и фамилия автора, а также название книги должны быть заданы.");
+                            }
+                            catch (Exception ex)
+                            {
+                                if (ex.InnerException != null)
+                                {
+                                    AlertMessage.Show("В процессе поиска книг по автору и названию произошла ошибка:\n" + ex.InnerException.Message);
+                                }
+                                else
+                                {
+                                    AlertMessage.Show("В процессе поиска книг по автору и названию произошла ошибка:\n" + ex.Message);
+                                }
+                            };
                             break;
                         }
                 }

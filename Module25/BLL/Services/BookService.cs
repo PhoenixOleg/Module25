@@ -117,6 +117,38 @@ namespace Module25.BLL.Services
             return bookRepository.GetCountBooksByGenre(genreEntity);
         }
 
+        public bool IsBookByTitleAuthor(BookAddingData bookAddingData, AuthorAddingData authorAddingData)
+        {
+            if (string.IsNullOrEmpty(authorAddingData.Name) || string.IsNullOrWhiteSpace(authorAddingData.Name))
+            {
+                throw new NameEmptyException();
+            }
+
+            if (string.IsNullOrEmpty(authorAddingData.Surname) || string.IsNullOrWhiteSpace(authorAddingData.Surname))
+            {
+                throw new NameEmptyException();
+            }
+
+            if (string.IsNullOrEmpty(bookAddingData.Title) || string.IsNullOrWhiteSpace(bookAddingData.Title))
+            {
+                throw new NameEmptyException();
+            }
+
+            AuthorEntity authorEntity = new()
+            {
+                Name = authorAddingData.Name,
+                MiddleName = authorAddingData.MiddleName,
+                Surname = authorAddingData.Surname
+            };
+            
+            BookEntity bookEntity = new()
+            {
+                Title = bookAddingData.Title
+            };
+
+            return bookRepository.IsBookByTitleAuthor(authorEntity, bookEntity);
+        }
+
         public void AddBook(BookAddingData bookAddingData)
         {
             if (string.IsNullOrEmpty(bookAddingData.Title) || string.IsNullOrWhiteSpace(bookAddingData.Title))
