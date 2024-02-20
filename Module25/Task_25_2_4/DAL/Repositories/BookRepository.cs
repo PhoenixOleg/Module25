@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using Module25.BLL.Models;
 using Module25.DAL;
 using Module25.DAL.Entities;
@@ -36,7 +38,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
                 return bookExtendedEntity;
             }
         }
-     
+
         /// <summary>
         /// Метод получения всех книг
         /// </summary>
@@ -139,15 +141,6 @@ namespace Module25.Task_25_2_4.DAL.Repositories
             }
         }
 
-        //public List<BookExtendedEntity> GetBookByAuthor(AuthorEntity authorEntity)
-        //{
-        //    using (var db = new ExtendedDBContext(false))
-        //    {
-        //        List<BookExtendedEntity> bookExtendedEntity = db.Books.Include(b => b.Authors.Where(a => a.Name == authorEntity.Name & a.MiddleName == authorEntity.MiddleName & a.Surname == authorEntity.Surname)).ToList();
-        //        return bookExtendedEntity;
-        //    }
-        //}
-
         public int GetCountBooksByAuthor(AuthorEntity authorEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -159,7 +152,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
             }
         }
 
-        public int GetCountBooksByGenre (GenreEntity genreEntity)
+        public int GetCountBooksByGenre(GenreEntity genreEntity)
         {
             using (var db = new ExtendedDBContext(false))
             {
@@ -179,6 +172,66 @@ namespace Module25.Task_25_2_4.DAL.Repositories
                    .Where(a => a.Name == authorEntity.Name && a.MiddleName == authorEntity.MiddleName && a.Surname == authorEntity.Surname)
                    .Select(b => b.Books.Where(b => b.Title == bookEntity.Title)).ToList().Any();
             }
+        }
+
+        public List<BookExtendedEntity> GetLastPublishedBook()
+        {
+            //Task 7 Получение последней вышедшей книги
+            using (var db = new ExtendedDBContext(false))
+            {
+                return db.Books.Where(b => b.PublicationDate == db.Books.Max(m => m.PublicationDate))
+                    .Include(g => g.Genres)
+                    .Include(a => a.Authors)
+                    .ToList();
+            }
+        }
+
+        public List<BookExtendedEntity> GetAllBooksNameAsc()
+        {
+            //Task 8 Получение списка всех книг, отсортированного в алфавитном порядке по названию 
+            using (var db = new ExtendedDBContext(false))
+            {
+                return db.Books.OrderBy(b => b.Title)
+                    .Include(g => g.Genres)
+                    .Include(a => a.Authors)
+                    .ToList();
+            }
+        }
+
+        public List<BookExtendedEntity> GetAllBooksPubDesc()
+        {
+            //Task 9 Получение списка всех книг, отсортированного в порядке убывания года их выхода
+            using (var db = new ExtendedDBContext(false))
+            {
+                return db.Books.OrderByDescending(b => b.PublicationDate)
+                    .Include(g => g.Genres)
+                    .Include(a => a.Authors)
+                    .ToList();
+            }
+        }
+
+        public List<BookExtendedEntity> GetBooksByGenrePubYear(GenreEntity genreEntity, (DateOnly beginDate, DateOnly endDate) dateInterval) //@@@ Task 1
+        {
+            using (var db = new ExtendedDBContext(false))
+            {
+                //Task 1 Получить список книг определенного жанра и вышедших между определенными годами
+
+                //return db.Books
+                //    .Include(a => a.Authors)
+                //    .Where(b => b.PublicationDate >= dateInterval.beginDate & b.PublicationDate < dateInterval.endDate)
+                //    .Include(g => g.Genres.Where(g => g.Name == genreEntity.Name))
+                //    .ToList();
+
+                SqlParameter pGenreName = new SqlParameter("@GenreName", genreEntity.Name);
+                SqlParameter pBeginDate = new SqlParameter("@BeginDate", dateInterval.beginDate);
+                SqlParameter pEndDate = new SqlParameter("@EndDate", dateInterval.endDate);
+
+                return db.Books
+                .FromSqlRaw("SELECT b.*, gl.Name GenreName, authors.Name, authors.Surname, authors.MiddleName FROM Books b\r\nJOIN (\r\n\tSELECT bg.BooksId, bg.GenresId from BookExtendedEntityGenreEntity bg\r\n\tJOIN Genres g on bg.GenresId = g.Id \r\n\tWHERE Name = @GenreName\r\n\t) genre on b.Id = genre.BooksId\r\nLEFT JOIN (\r\n    SELECT ab.BooksId, a.MiddleName, a.Name, a.Surname\r\n    FROM AuthorEntityBookExtendedEntity ab\r\n    JOIN Authors a ON ab.AuthorsId = a.Id\r\n) authors ON b.Id = authors.BooksId\r\nJOIN (\r\n\tSELECT g.Name, bg.BooksId from BookExtendedEntityGenreEntity bg\r\n\tJOIN Genres g on bg.GenresId = g.Id \r\n) gl ON gl.BooksId  = b.Id\r\nWHERE PublicationDate BETWEEN @BeginDate AND @EndDate", pGenreName, pBeginDate, pEndDate)
+                .Include(g => g.Genres)
+                .Include(a => a.Authors)
+                .ToList();
+            };
         }
     }
 }

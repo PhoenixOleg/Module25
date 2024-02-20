@@ -9,6 +9,8 @@ using Module25.BLL.Models;
 using Module25.DAL.Entities;
 using Module25.DAL;
 using Microsoft.EntityFrameworkCore;
+using static System.Reflection.Metadata.BlobBuilder;
+using Microsoft.VisualBasic;
 
 namespace Module25.Task_25_2_4.DAL.Repositories
 {
@@ -132,7 +134,7 @@ namespace Module25.Task_25_2_4.DAL.Repositories
         }
 
         public int GetBookFromUser(UserExtendedEntity userExtendedEntity, BookExtendedEntity bookExtendedEntity)
-            {
+        {
             using (var db = new ExtendedDBContext(false))
             {
                 BookExtendedEntity targetBook = db.Books.Include(b => b.Users).Where(b => b.Id == bookExtendedEntity.Id).FirstOrDefault();
@@ -151,6 +153,36 @@ namespace Module25.Task_25_2_4.DAL.Repositories
 
                 return db.SaveChanges();
             }
+        }
+
+        public bool HaveUserBookByTitle(BookEntity bookEntity, UserEntity userEntity) //@@@ Task 5
+        {
+            using (var db = new ExtendedDBContext(false))
+            {
+                Console.WriteLine(db.Books
+                    .Include(u => u.Users.Where(u => u.Email == userEntity.Email))
+                    .Select(b => b.Title == bookEntity.Title).ToQueryString());
+
+                //return db.Users
+                //   .Include(b => b.Books)
+                //   .Where(u => u.Email == userEntity.Email)
+                //   .Select(b => b.Books.Where(b => b.Title == bookEntity.Title).Select(a => a.Id)).ToList().Any();
+
+                return db.Books
+                    .Include(u => u.Users.Where(u => u.Email == userEntity.Email))
+                    .Select(b => b.Title == bookEntity.Title).ToList().Any();
+            }
+        }
+
+        public int GetBooksCountHasUser(UserEntity userEntity)
+        {
+            //Task 6 Получить количество книг на руках у пользователя
+            using (var db = new ExtendedDBContext(false))
+            {
+                return db.Users.Include(b => b.Books)
+                .Where(u => u.Email == userEntity.Email)
+                .Select(b => b.Books.Count).First();
+            };
         }
     }
 }

@@ -68,8 +68,8 @@ namespace Module25.BLL.Services
 
             UserEntity userEntity = new()
             { 
-               Name = userRegistrationData.Name
-             , Email = userRegistrationData.Email
+               Name = userRegistrationData.Name,
+               Email = userRegistrationData.Email
             };
 
             if (userRepository.AddUser(userEntity) == 0)
@@ -206,6 +206,54 @@ namespace Module25.BLL.Services
                 throw new Exception();
             }
 
+        }
+
+        public bool HaveUserBookByTitle(BookAddingData bookAddingData, UserRegistrationData userRegistrationData)
+        {
+            if (string.IsNullOrEmpty(userRegistrationData.Email) || string.IsNullOrWhiteSpace(userRegistrationData.Email))
+            {
+                throw new EMailEmptyException();
+            }
+
+            if (!new EmailAddressAttribute().IsValid(userRegistrationData.Email))
+                throw new EMailEmptyException();
+
+            UserEntity userEntity = new()
+            {
+                Name = userRegistrationData.Name,
+                Email = userRegistrationData.Email
+            };
+
+            if (string.IsNullOrEmpty(bookAddingData.Title) || string.IsNullOrWhiteSpace(bookAddingData.Title))
+            {
+                throw new NameEmptyException();
+            }
+
+            BookEntity bookEntity = new()
+            {
+                Title = bookAddingData.Title
+            };
+
+            return userRepository.HaveUserBookByTitle(bookEntity, userEntity);
+        }
+
+        public int GetBooksCountHasUser(UserRegistrationData userRegistrationData)
+        {
+            if (string.IsNullOrEmpty(userRegistrationData.Email) || string.IsNullOrWhiteSpace(userRegistrationData.Email))
+            {
+                throw new EMailEmptyException();
+            }
+
+            if (!new EmailAddressAttribute().IsValid(userRegistrationData.Email))
+                throw new EMailEmptyException();
+
+            UserEntity userEntity = new()
+            {
+                Name = userRegistrationData.Name,
+                Email = userRegistrationData.Email
+            };
+
+            return userRepository.GetBooksCountHasUser(userEntity);
         }
 
         public User ConstructUserModel(UserEntity userEntity)

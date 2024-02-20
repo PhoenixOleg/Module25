@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using Module25.BLL.Exceptions;
 using Module25.BLL.Models;
 using Module25.DAL.Entities;
@@ -140,7 +141,7 @@ namespace Module25.BLL.Services
                 MiddleName = authorAddingData.MiddleName,
                 Surname = authorAddingData.Surname
             };
-            
+
             BookEntity bookEntity = new()
             {
                 Title = bookAddingData.Title
@@ -260,6 +261,110 @@ namespace Module25.BLL.Services
             };
 
             return bookEntity;
+        }
+
+        public List<Book> GetBooksByGenrePubYear(GenreAddingData genreAddingData, (DateOnly beginDate, DateOnly endDate) dateInterval)
+        {
+            List<Book> booksList = new();
+
+            if (string.IsNullOrEmpty(genreAddingData.Name) || string.IsNullOrWhiteSpace(genreAddingData.Name))
+            {
+                throw new NameEmptyException();
+            }
+
+            if (dateInterval.beginDate.CompareTo(DateOnly.FromDateTime(DateTime.Now)) > 0 || dateInterval.endDate.CompareTo(DateOnly.FromDateTime(DateTime.Now)) > 0)
+            {
+                throw new DateOutOfRangeException();
+            }
+
+            if (dateInterval.beginDate.CompareTo(dateInterval.endDate) >= 0)
+            {
+                throw new InvalidDateIntervalException();
+            }
+
+            GenreEntity genreEntity = new()
+            {
+                Name = genreAddingData.Name,
+            };
+
+            List<BookExtendedEntity> findBooks = bookRepository.GetBooksByGenrePubYear(genreEntity, dateInterval);
+
+            if (findBooks.Count == 0)
+            {
+                throw new NoOneObjectException();
+            }
+            else
+            {
+                foreach (BookExtendedEntity bookExtendedEntity in findBooks)
+                {
+                    booksList.Add(ConstructBookModel_Extended(bookExtendedEntity));
+                }
+            }
+
+            return booksList;
+        }
+
+        public List<Book> ShowLastPublishedBook()
+        {
+            List<Book> booksList = new();
+
+            List<BookExtendedEntity> findBooks = bookRepository.GetLastPublishedBook();
+
+            if (findBooks.Count == 0)
+            {
+                throw new NoOneObjectException();
+            }
+            else
+            {
+                foreach (BookExtendedEntity bookExtendedEntity in findBooks)
+                {
+                    booksList.Add(ConstructBookModel_Extended(bookExtendedEntity));
+                }
+            }
+
+            return booksList;
+        }
+
+        public List<Book> ShowAllBooksNameAsc()
+        {
+            List<Book> booksList = new();
+
+            List<BookExtendedEntity> findBooks = bookRepository.GetAllBooksNameAsc();
+
+            if (findBooks.Count == 0)
+            {
+                throw new NoOneObjectException();
+            }
+            else
+            {
+                foreach (BookExtendedEntity bookExtendedEntity in findBooks)
+                {
+                    booksList.Add(ConstructBookModel_Extended(bookExtendedEntity));
+                }
+            }
+
+            return booksList;
+        }
+
+        public List<Book> ShowAllBooksPubDesc()
+        {
+            List<Book> booksList = new();
+
+            List<BookExtendedEntity> findBooks = bookRepository.GetAllBooksPubDesc();
+
+            if (findBooks.Count == 0)
+            {
+                throw new NoOneObjectException();
+            }
+            else
+            {
+                foreach (BookExtendedEntity bookExtendedEntity in findBooks)
+                {
+                    booksList.Add(ConstructBookModel_Extended(bookExtendedEntity));
+                }
+            }
+
+            return booksList;
         }
     }
 }

@@ -39,10 +39,10 @@ namespace Module25.PLL.Views
                             {
                                 List<Book> books = bookService.ShowAll();
 
-                                Console.WriteLine("\n|ID\t|Title\t|Decription\t|Date\t|");
+                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", "ID", "Название", "Описание", "Год");
                                 foreach (Book item in books)
                                 {
-                                    Console.WriteLine("|{0}\t|{1}\t|{2}\t|{3}\t|", item.Id, item.Title, item.Description, item.PublicationDate.Year);
+                                    Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", item.Id, item.Title, item.Description, item.PublicationDate.Year);
                                 }
                                 Console.WriteLine();
                             }
@@ -69,8 +69,8 @@ namespace Module25.PLL.Views
                             try
                             {
                                 selectedBook = bookService.ShowByID(id);
-                                Console.WriteLine("\n|ID\t|Title\t|Decription\t|Date\t|");
-                                Console.WriteLine("|{0}\t|{1}\t|{2}\t|{3}\t|", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year );
+                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", "ID", "Название", "Описание", "Год");
+                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year );
                                 Console.WriteLine();
                             }
                             catch (ObjectNotFoundException)
@@ -136,8 +136,8 @@ namespace Module25.PLL.Views
                             if (selectedBook != null)
                             {
                                 Console.WriteLine("Выбранная книга:");
-                                Console.WriteLine("\n|ID\t|Title\t|Decription\t|Date\t|");
-                                Console.WriteLine("|{0}\t|{1}\t|{2}\t|{3}\t|", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate);
+                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", "ID", "Название", "Описание", "Год");
+                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year);
                                 Console.WriteLine();
 
                                 bool flag = false;
