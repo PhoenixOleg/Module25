@@ -4,7 +4,7 @@ using Microsoft.VisualBasic;
 using Module25.BLL.Models;
 using Module25.DAL;
 using Module25.DAL.Entities;
-using Module25.Task_25_2_4.DAL.Entities;
+using Module25.Task_25_2_4.DAL;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Module25.Task_25_2_4.DAL.Repositories
+namespace Module25.DAL.Repositories
 {
     public class BookRepository
     {
@@ -220,6 +220,14 @@ namespace Module25.Task_25_2_4.DAL.Repositories
                 //    .Include(a => a.Authors)
                 //    .Where(b => b.PublicationDate >= dateInterval.beginDate & b.PublicationDate < dateInterval.endDate)
                 //    .Include(g => g.Genres.Where(g => g.Name == genreEntity.Name))
+                //    .ToList();
+
+                //return db.Books
+                //    .Include(a => a.Authors)
+                //    .Include(g => g.Genres)
+                //    .Where(b => b.PublicationDate >= dateInterval.beginDate & b.PublicationDate < dateInterval.endDate)
+                //    //.Include(g => g.Genres.Where(g => g.Name == genreEntity.Name)) //Она фильтрует список подгружаемых в книгу жанров но не фильтрует список книг
+                //    .Where(book => book.Genres.Name == genreEntity.Name)
                 //    .ToList();
 
                 SqlParameter pGenreName = new SqlParameter("@GenreName", genreEntity.Name);

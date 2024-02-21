@@ -1,4 +1,4 @@
-﻿using Module25.Task_25_2_4.DAL.Entities;
+﻿using Module25.DAL.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

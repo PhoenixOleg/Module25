@@ -2,7 +2,6 @@
 using Module25.BLL.Models;
 using Module25.BLL.Services;
 using Module25.PLL.Helpers;
-using Module25.Task_25_2_4.DAL.Repositories;
 using SocialNetwork.PLL.Helpers;
 using System;
 using System.Collections.Generic;
@@ -232,7 +231,7 @@ namespace Module25.PLL.Views
                             break;
                         }
 
-                    case "5": //Есть ли определенная книга на руках у пользователя @@@
+                    case "5": //Есть ли определенная книга на руках у пользователя
                         {
                             BookAddingData bookAddingData = new();
                             UserRegistrationData userRegistrationData = new();

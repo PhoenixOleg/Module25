@@ -1,5 +1,4 @@
-﻿using Module25.Task_25_2_4.DAL.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,8 +10,9 @@ using Module25.DAL;
 using Microsoft.EntityFrameworkCore;
 using static System.Reflection.Metadata.BlobBuilder;
 using Microsoft.VisualBasic;
+using Module25.Task_25_2_4.DAL;
 
-namespace Module25.Task_25_2_4.DAL.Repositories
+namespace Module25.DAL.Repositories
 {
     public class UserRepository
     {
@@ -155,22 +155,18 @@ namespace Module25.Task_25_2_4.DAL.Repositories
             }
         }
 
-        public bool HaveUserBookByTitle(BookEntity bookEntity, UserEntity userEntity) //@@@ Task 5
+        public bool HaveUserBookByTitle(BookExtendedEntity bookExtendedEntity, UserEntity userEntity)
         {
+            //Task 5 Есть ли определенная книга на руках у пользователя
             using (var db = new ExtendedDBContext(false))
             {
-                Console.WriteLine(db.Books
-                    .Include(u => u.Users.Where(u => u.Email == userEntity.Email))
-                    .Select(b => b.Title == bookEntity.Title).ToQueryString());
+                BookExtendedEntity? book = db.Books.Where(b => b.Title == bookExtendedEntity.Title).FirstOrDefault();
+                var a = db.Users
+                   .Include(b => b.Books)
+                   .Where(u => u.Email == userEntity.Email)
+                   .Any(b => b.Books.Contains(db.Books.Where(b => b.Title == bookExtendedEntity.Title).FirstOrDefault()));
 
-                //return db.Users
-                //   .Include(b => b.Books)
-                //   .Where(u => u.Email == userEntity.Email)
-                //   .Select(b => b.Books.Where(b => b.Title == bookEntity.Title).Select(a => a.Id)).ToList().Any();
-
-                return db.Books
-                    .Include(u => u.Users.Where(u => u.Email == userEntity.Email))
-                    .Select(b => b.Title == bookEntity.Title).ToList().Any();
+                return a;
             }
         }
 

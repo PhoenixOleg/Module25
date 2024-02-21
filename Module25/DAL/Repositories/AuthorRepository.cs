@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Module25.DAL.Entities;
-using Module25.Task_25_2_4.DAL.Entities;
-using Module25.Task_25_2_4.DAL;
 using Microsoft.EntityFrameworkCore;
 using Module25.BLL.Models;
 using Module25.BLL.Exceptions;
