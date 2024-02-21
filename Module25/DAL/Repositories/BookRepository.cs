@@ -7,6 +7,7 @@ using Module25.DAL.Entities;
 using Module25.Task_25_2_4.DAL;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
@@ -215,30 +216,39 @@ namespace Module25.DAL.Repositories
             using (var db = new ExtendedDBContext(false))
             {
                 //Task 1 Получить список книг определенного жанра и вышедших между определенными годами
-
-                //return db.Books
-                //    .Include(a => a.Authors)
-                //    .Where(b => b.PublicationDate >= dateInterval.beginDate & b.PublicationDate < dateInterval.endDate)
-                //    .Include(g => g.Genres.Where(g => g.Name == genreEntity.Name))
-                //    .ToList();
-
-                //return db.Books
-                //    .Include(a => a.Authors)
-                //    .Include(g => g.Genres)
-                //    .Where(b => b.PublicationDate >= dateInterval.beginDate & b.PublicationDate < dateInterval.endDate)
-                //    //.Include(g => g.Genres.Where(g => g.Name == genreEntity.Name)) //Она фильтрует список подгружаемых в книгу жанров но не фильтрует список книг
-                //    .Where(book => book.Genres.Name == genreEntity.Name)
-                //    .ToList();
-
-                SqlParameter pGenreName = new SqlParameter("@GenreName", genreEntity.Name);
-                SqlParameter pBeginDate = new SqlParameter("@BeginDate", dateInterval.beginDate);
-                SqlParameter pEndDate = new SqlParameter("@EndDate", dateInterval.endDate);
+                Debug.WriteLine(db.Books
+                    .Include(a => a.Authors)
+                    .Include(g => g.Genres)
+                    .Where(b => b.PublicationDate >= dateInterval.beginDate & b.PublicationDate < dateInterval.endDate)
+                    //.Include(g => g.Genres.Where(g => g.Name == genreEntity.Name)) //Она фильтрует список подгружаемых в книгу жанров но не фильтрует список книг
+                    .Where(book => book.Genres.Contains(db.Genres.Where(g => g.Name == genreEntity.Name).FirstOrDefault()))
+                    .ToQueryString());
 
                 return db.Books
-                .FromSqlRaw("SELECT b.*, gl.Name GenreName, authors.Name, authors.Surname, authors.MiddleName FROM Books b\r\nJOIN (\r\n\tSELECT bg.BooksId, bg.GenresId from BookExtendedEntityGenreEntity bg\r\n\tJOIN Genres g on bg.GenresId = g.Id \r\n\tWHERE Name = @GenreName\r\n\t) genre on b.Id = genre.BooksId\r\nLEFT JOIN (\r\n    SELECT ab.BooksId, a.MiddleName, a.Name, a.Surname\r\n    FROM AuthorEntityBookExtendedEntity ab\r\n    JOIN Authors a ON ab.AuthorsId = a.Id\r\n) authors ON b.Id = authors.BooksId\r\nJOIN (\r\n\tSELECT g.Name, bg.BooksId from BookExtendedEntityGenreEntity bg\r\n\tJOIN Genres g on bg.GenresId = g.Id \r\n) gl ON gl.BooksId  = b.Id\r\nWHERE PublicationDate BETWEEN @BeginDate AND @EndDate", pGenreName, pBeginDate, pEndDate)
-                .Include(g => g.Genres)
-                .Include(a => a.Authors)
-                .ToList();
+                    .Include(a => a.Authors)
+                    .Include(g => g.Genres)
+                    .Where(b => b.PublicationDate >= dateInterval.beginDate & b.PublicationDate < dateInterval.endDate)
+                    //.Include(g => g.Genres.Where(g => g.Name == genreEntity.Name)) //Она фильтрует список подгружаемых в книгу жанров но не фильтрует список книг
+                    .Where(book => book.Genres.Contains(db.Genres.Where(g => g.Name == genreEntity.Name).FirstOrDefault()))
+                    .ToList();
+
+                //SqlParameter pGenreName = new SqlParameter("@GenreName", genreEntity.Name);
+                //SqlParameter pBeginDate = new SqlParameter("@BeginDate", dateInterval.beginDate);
+                //SqlParameter pEndDate = new SqlParameter("@EndDate", dateInterval.endDate);
+
+                //Метод FromSqlRaw (менее устойчивый к инекциям)
+                //return db.Books
+                //.FromSqlRaw("SELECT b.*, gl.Name GenreName, authors.Name, authors.Surname, authors.MiddleName FROM Books b\r\nJOIN (\r\n\tSELECT bg.BooksId, bg.GenresId from BookExtendedEntityGenreEntity bg\r\n\tJOIN Genres g on bg.GenresId = g.Id \r\n\tWHERE Name = @GenreName\r\n\t) genre on b.Id = genre.BooksId\r\nLEFT JOIN (\r\n    SELECT ab.BooksId, a.MiddleName, a.Name, a.Surname\r\n    FROM AuthorEntityBookExtendedEntity ab\r\n    JOIN Authors a ON ab.AuthorsId = a.Id\r\n) authors ON b.Id = authors.BooksId\r\nJOIN (\r\n\tSELECT g.Name, bg.BooksId from BookExtendedEntityGenreEntity bg\r\n\tJOIN Genres g on bg.GenresId = g.Id \r\n) gl ON gl.BooksId  = b.Id\r\nWHERE PublicationDate BETWEEN @BeginDate AND @EndDate", pGenreName, pBeginDate, pEndDate)
+                //.Include(g => g.Genres)
+                //.Include(a => a.Authors)
+                //.ToList();
+
+                //Метод FromSql - устойчивый (https://learn.microsoft.com/ru-ru/ef/core/querying/sql-queries)
+                //return db.Books
+                //        .FromSql($"SELECT b.*, gl.Name GenreName, authors.Name, authors.Surname, authors.MiddleName FROM Books b\r\nJOIN (\r\n\tSELECT bg.BooksId, bg.GenresId from BookExtendedEntityGenreEntity bg\r\n\tJOIN Genres g on bg.GenresId = g.Id \r\n\tWHERE Name = {pGenreName}\r\n\t) genre on b.Id = genre.BooksId\r\nLEFT JOIN (\r\n    SELECT ab.BooksId, a.MiddleName, a.Name, a.Surname\r\n    FROM AuthorEntityBookExtendedEntity ab\r\n    JOIN Authors a ON ab.AuthorsId = a.Id\r\n) authors ON b.Id = authors.BooksId\r\nJOIN (\r\n\tSELECT g.Name, bg.BooksId from BookExtendedEntityGenreEntity bg\r\n\tJOIN Genres g on bg.GenresId = g.Id \r\n) gl ON gl.BooksId  = b.Id\r\nWHERE PublicationDate BETWEEN {pBeginDate} AND {pEndDate}")
+                //        .Include(g => g.Genres)
+                //        .Include(a => a.Authors)
+                //        .ToList();
             };
         }
     }
