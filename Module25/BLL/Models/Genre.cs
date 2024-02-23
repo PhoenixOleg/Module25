@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Module25.BLL.Models
 {
+    /// <summary>
+    /// Полная модель Жанра со список книг этого жанра
+    /// </summary>
     public class Genre
     {
         public int Id { get; set; }

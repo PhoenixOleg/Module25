@@ -2,6 +2,9 @@
 
 namespace Module25.BLL.Exceptions
 {
+    /// <summary>
+    /// Объект уже присутствует
+    /// </summary>
     public class AlreadyExistsException : Exception
     {
         public AlreadyExistsException()

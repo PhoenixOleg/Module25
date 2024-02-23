@@ -41,18 +41,8 @@ namespace Module25.DAL
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<UserExtendedEntity>()
-                //.HasMany(b => b.Books)
-                //.WithMany(u => u.Users)
-                //.UsingEntity(t => t.ToTable("BooksToUsers"))
                 .HasIndex(u => u.Email)
                 .IsUnique();
-
-            //builder.Entity<BookExtendedEntity>()
-            //    .HasMany(a => a.Authors)
-            //    .WithMany(b => b.Books)
-            //    .UsingEntity(t => t.ToTable("AuthorsToBooks"));
-
-            //builder.Entity<AuthorEntity>()
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

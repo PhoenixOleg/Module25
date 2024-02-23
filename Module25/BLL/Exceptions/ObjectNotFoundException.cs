@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Module25.BLL.Exceptions
 {
+    /// <summary>
+    /// Объект не найден
+    /// </summary>
     public class ObjectNotFoundException : Exception
     {
         public ObjectNotFoundException() 

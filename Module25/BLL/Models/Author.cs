@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Module25.BLL.Models
 {
+    /// <summary>
+    /// Полная модель объекта Автор со списком написанных им книг
+    /// </summary>
     public class Author
     {
         public int Id { get; set; }

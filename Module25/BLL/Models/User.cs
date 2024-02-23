@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Module25.BLL.Models
 {
+    /// <summary>
+    /// Модель Пользователя
+    /// </summary>
     public class User
     {
         public int Id { get; }

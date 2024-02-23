@@ -22,6 +22,11 @@ namespace Module25.BLL.Services
             bookRepository = new BookRepository();
         }
 
+        /// <summary>
+        /// Метод возвращения списка всех книг слоя BLL без данных об авторах и жанрах
+        /// </summary>
+        /// <returns>Список экземпляров Book</returns>
+        /// <exception cref="NoOneObjectException">Список пуст</exception>
         public List<Book> ShowAll()
         {
             List<Book> booksList = new();
@@ -42,6 +47,11 @@ namespace Module25.BLL.Services
             return booksList;
         }
 
+        /// <summary>
+        /// Метод возвращения списка всех книг слоя BLL c данными об авторах и жанрах
+        /// </summary>
+        /// <returns>Список экземпляров Book</returns>
+        /// <exception cref="NoOneObjectException">Список пуст</exception>
         public List<Book> ShowAll_Extended()
         {
             List<Book> booksList = new();
@@ -62,6 +72,12 @@ namespace Module25.BLL.Services
             return booksList;
         }
 
+        /// <summary>
+        /// Метод получения книги по ID слоя BLL без данных об авторах и жанрах
+        /// </summary>
+        /// <param name="id">Id книги</param>
+        /// <returns>Экземпляр Book</returns>
+        /// <exception cref="ObjectNotFoundException">Книга не найдена</exception>
         public Book ShowByID(int id)
         {
             BookEntity findBook = bookRepository.GetBookByID(id);
@@ -71,6 +87,12 @@ namespace Module25.BLL.Services
             return ConstructBookModel(findBook);
         }
 
+        /// <summary>
+        /// Метод получения книги по ID слоя BLL c данными об авторах и жанрах
+        /// </summary>
+        /// <param name="id">Id книги</param>
+        /// <returns>Книга не найдена</returns>
+        /// <exception cref="ObjectNotFoundException"></exception>
         public Book ShowByID_Extended(int id)
         {
             BookExtendedEntity findBook = bookRepository.GetBookByID_Extended(id);
@@ -80,6 +102,12 @@ namespace Module25.BLL.Services
             return ConstructBookModel_Extended(findBook);
         }
 
+        /// <summary>
+        /// Метод получения количества книг автора по ФИО уровня BLL
+        /// </summary>
+        /// <param name="authorAddingData">Экземпляр AuthorAddingData (ФИО автора)</param>
+        /// <returns>Количество найденных книг</returns>
+        /// <exception cref="NameEmptyException">Имя или фамилия автора не указаны</exception>
         public int ShowCountBooksByAuthor(AuthorAddingData authorAddingData)
         {
             if (string.IsNullOrEmpty(authorAddingData.Name) || string.IsNullOrWhiteSpace(authorAddingData.Name))
@@ -102,6 +130,12 @@ namespace Module25.BLL.Services
             return bookRepository.GetCountBooksByAuthor(authorEntity);
         }
 
+        /// <summary>
+        /// Метод получения количества книг по названию жанра уровня BLL
+        /// </summary>
+        /// <param name="genreAddingData">Экземпляр GenreAddingData (название жанра)</param>
+        /// <returns>Количество найденных книг</returns>
+        /// <exception cref="NameEmptyException">Название жанра не задано</exception>
         public int ShowCountBooksByGenre(GenreAddingData genreAddingData)
         {
             if (string.IsNullOrEmpty(genreAddingData.Name) || string.IsNullOrWhiteSpace(genreAddingData.Name))
@@ -117,6 +151,14 @@ namespace Module25.BLL.Services
             return bookRepository.GetCountBooksByGenre(genreEntity);
         }
 
+        /// <summary>
+        /// Метод проверки наличия книги в библиотеке по названию и ФИО автора уровня BLL
+        /// </summary>
+        /// <param name="bookAddingData">Экземпляр BookAddingData (название книги)</param>
+        /// <param name="authorAddingData">Экземпляр AuthorAddingData (ФИО автора (соавтора)</param>
+        /// <returns>true - книга найдена,
+        /// false - книга не найдена</returns>
+        /// <exception cref="NameEmptyException"></exception>
         public bool IsBookByTitleAuthor(BookAddingData bookAddingData, AuthorAddingData authorAddingData)
         {
             if (string.IsNullOrEmpty(authorAddingData.Name) || string.IsNullOrWhiteSpace(authorAddingData.Name))
@@ -149,6 +191,13 @@ namespace Module25.BLL.Services
             return bookRepository.IsBookByTitleAuthor(authorEntity, bookEntity);
         }
 
+        /// <summary>
+        /// Метод добавления книги в библиотеку уровня BLL
+        /// </summary>
+        /// <param name="bookAddingData">Экземпляр BookAddingData</param>
+        /// <exception cref="NameEmptyException">Название книги не указано</exception>
+        /// <exception cref="DateOutOfRangeException">Дата издания книги вне диапазона (больше текущей)</exception>
+        /// <exception cref="Exception">Иные ошибки добавления книги</exception>
         public void AddBook(BookAddingData bookAddingData)
         {
             if (string.IsNullOrEmpty(bookAddingData.Title) || string.IsNullOrWhiteSpace(bookAddingData.Title))
@@ -176,6 +225,12 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Метод удаления книги из библиотеки уровня BLL
+        /// </summary>
+        /// <param name="book">Экземпляр Book</param>
+        /// <exception cref="NoOneObjectException">Книга не найдена</exception>
+        /// <exception cref="Exception">Иная ошибка удаления книги</exception>
         public void RemoveBook(Book? book)
         {
             if (book == null)
@@ -191,6 +246,12 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Метод удаления книги из библиотеки по ее ID уровня BLL
+        /// </summary>
+        /// <param name="id">ID книги</param>
+        /// <exception cref="ObjectNotFoundException">книга не найдена</exception>
+        /// <exception cref="Exception">Иная ошибка удаления книги</exception>
         public void RemoveBook(int id)
         {
             switch (bookRepository.DeleteBook(id))
@@ -206,6 +267,14 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Метод обновления даты издания книги по ее ID уровня BLL
+        /// </summary>
+        /// <param name="id">ID книги</param>
+        /// <param name="publicationDate">Новая дата издания</param>
+        /// <exception cref="DateOutOfRangeException">Дата вне диапазона (больше текущей)</exception>
+        /// <exception cref="ObjectNotFoundException">Книга не найдена</exception>
+        /// <exception cref="Exception">Иная ошибка обновления даты издания книги</exception>
         public void UpdateBookDateByID(int id, DateOnly publicationDate)
         {
             if (publicationDate.CompareTo(DateOnly.FromDateTime(DateTime.Now)) > 0) //Только на превышение текушего года. Допустим в библиотеке есть оцифрованные старые книги)
@@ -226,6 +295,11 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Создание упрощенного Book (без авторов, жанров) из BookEntity при возврате с уровня DAL
+        /// </summary>
+        /// <param name="bookEntity">Полученный экземпляр BookEntity</param>
+        /// <returns>Экземпляр Book</returns>
         public Book ConstructBookModel(BookEntity bookEntity)
         {
             return new Book(
@@ -236,6 +310,11 @@ namespace Module25.BLL.Services
                 );
         }
 
+        /// <summary>
+        /// Создание Book (c авторами и жанрами) из BookExtendedEntity при возврате с уровня DAL
+        /// </summary>
+        /// <param name="bookExtendedEntity">Полученный экземпляр BookExtendedEntity</param>
+        /// <returns>Экземпляр Book</returns>
         public Book ConstructBookModel_Extended(BookExtendedEntity bookExtendedEntity)
         {
             return new Book(
@@ -245,10 +324,17 @@ namespace Module25.BLL.Services
                 bookExtendedEntity.PublicationDate,
                 bookExtendedEntity.Authors,
                 bookExtendedEntity.Genres,
-                bookExtendedEntity.Users
+                new List<UserExtendedEntity>() //Список пользователей не используется на уровне презентации и не запрашиваетяся на уровне DAL,
+                                               //поэтому делаю пустой список, чтобы не загружатьпамять - пользователей может быть тысячи
+                                               //Наверное тут лучше вести новую модель без пользователей
                 );
         }
 
+        /// <summary>
+        /// Создание BookEntity из Book для передачи на уровень DAL
+        /// </summary>
+        /// <param name="book">Передаваемый экземпляр Book</param>
+        /// <returns>Экземпляр BookEntity</returns>
         public BookEntity ConvertToBookEntity(Book book)
         {
             BookEntity bookEntity = new()
@@ -262,7 +348,17 @@ namespace Module25.BLL.Services
             return bookEntity;
         }
 
-        public List<Book> GetBooksByGenrePubYear(GenreAddingData genreAddingData, (DateOnly beginDate, DateOnly endDate) dateInterval)
+        /// <summary>
+        /// Получение списка по названию жанра и дате издания на уровне BLL
+        /// </summary>
+        /// <param name="genreAddingData">"Экземпляр GenreAddingData (название жанра)</param>
+        /// <param name="dateInterval">Кортеж с интервалом дат издания</param>
+        /// <returns>Список экземпляров Book</returns>
+        /// <exception cref="NameEmptyException">Название жанра не задано</exception>
+        /// <exception cref="DateOutOfRangeException">Начальная дата диапазона больше текущей даты</exception>
+        /// <exception cref="InvalidDateIntervalException">Дата начала диапазона больше даты его окончания</exception>
+        /// <exception cref="NoOneObjectException">Список пуст</exception>
+        public List<Book> ShowBooksByGenrePubYear(GenreAddingData genreAddingData, (DateOnly beginDate, DateOnly endDate) dateInterval)
         {
             List<Book> booksList = new();
 
@@ -303,6 +399,11 @@ namespace Module25.BLL.Services
             return booksList;
         }
 
+        /// <summary>
+        /// Получение последней изданной книги (списка книг) на уровне BLL
+        /// </summary>
+        /// <returns>Список экземпляров Book</returns>
+        /// <exception cref="NoOneObjectException">Список пуст</exception>
         public List<Book> ShowLastPublishedBook()
         {
             List<Book> booksList = new();
@@ -324,6 +425,11 @@ namespace Module25.BLL.Services
             return booksList;
         }
 
+        /// <summary>
+        /// Получение спика всех книг, отсортированного в алфавитном порядке по названию
+        /// </summary>
+        /// <returns>Список экземпляров Book</returns>
+        /// <exception cref="NoOneObjectException">Список пуст</exception>
         public List<Book> ShowAllBooksNameAsc()
         {
             List<Book> booksList = new();
@@ -345,6 +451,11 @@ namespace Module25.BLL.Services
             return booksList;
         }
 
+        /// <summary>
+        /// Получение спика всех книг, отсортированного в порядке убывания даты их выхода
+        /// </summary>
+        /// <returns>Список экземпляров Book</returns>
+        /// <exception cref="NoOneObjectException">Список пуст</exception>
         public List<Book> ShowAllBooksPubDesc()
         {
             List<Book> booksList = new();

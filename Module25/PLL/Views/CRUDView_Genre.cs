@@ -10,12 +10,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Module25.PLL.Views
-{    
+{
     public class CRUDView_Genre
     {
         GenreService genreService = new();
         BookService bookService = new();
-        
+        CommonView commonView = new();
+
         public void Show()
         {
             string answer;
@@ -42,48 +43,20 @@ namespace Module25.PLL.Views
                 {
                     case "1":
                         {
-                            try
-                            {
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                foreach (Book item in bookService.ShowAll_Extended())
-                                {
-                                    Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", item.Id, item.Title, item.Description, item.PublicationDate.Year, string.Join(" ", item.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", item.Genres.Select(g => g.Name).ToArray()));
-                                }
-                            }
-                            catch (NoOneObjectException)
-                            {
-                                AlertMessage.Show("Список книг пуст");
-                            }
-                            catch (Exception ex)
-                            {
-                                AlertMessage.Show("Возникла ошибка:\n" + ex.Message);
-                            }
-
+                            commonView.Show_AllBooks(true);
                             break;
                         }
 
                     case "2": //Получить (выбрать) книгу по ID
                         {
-                            bool flag;
-                            int id;
-
-                            do
-                            {
-                                Console.Write("Введите ID книги: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("книги");
 
                             selectedBook = null;
 
                             try
                             {
                                 selectedBook = bookService.ShowByID_Extended(id);
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year, string.Join(" ", selectedBook.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", selectedBook.Genres.Select(g => g.Name).ToArray()));
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
                             }
                             catch (ObjectNotFoundException)
                             {
@@ -99,51 +72,19 @@ namespace Module25.PLL.Views
 
                     case "3": //Получить все жанры
                         {
-                            try
-                            {
-                                List<Genre> genres = genreService.ShowAll();
-
-                                Console.WriteLine("Список жанров:");
-                                Console.WriteLine("| {0, 4} | {1, 15} |", "ID", "Жанр");
-                                foreach (Genre item in genres)
-                                {
-                                    Console.WriteLine("| {0, 4} | {1, 15} |", item.Id, item.Name);
-                                }
-                                Console.WriteLine();
-                            }
-
-                            catch (NoOneObjectException)
-                            {
-                                AlertMessage.Show("Справочник жанров пуст");
-                            }
-
-                            catch (Exception ex)
-                            {
-                                AlertMessage.Show("Возникла ошибка:\n" + ex.Message);
-                            }
+                            commonView.Show_AllGenres();
                             break;
                         }
 
                     case "4": //Получить (выбрать) жанр по ID
                         {
-                            bool flag;
-                            int id;
-
-                            do
-                            {
-                                Console.Write("Введите ID жанра: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("жанра");
 
                             selectedGenre = null;
                             try
                             {
                                 selectedGenre = genreService.ShowByID(id);
-                                Console.WriteLine("Выбранный жанр:");
-                                Console.WriteLine("| {0, 4} | {1, 15} |", "ID", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 15} |", selectedGenre.Id, selectedGenre.Name);
-                                Console.WriteLine();
+                                commonView.Show_SelectedGenre(selectedGenre);
                             }
                             catch (ObjectNotFoundException)
                             {
@@ -194,10 +135,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedGenre != null)
                             {
-                                Console.WriteLine("Выбранный жанр:");
-                                Console.WriteLine("| {0, 4} | {1, 15} |", "ID", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 15} |", selectedGenre.Id, selectedGenre.Name);
-                                Console.WriteLine();
+                                commonView.Show_SelectedGenre(selectedGenre);
 
                                 bool flag = false;
                                 do
@@ -252,10 +190,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedBook != null)
                             {
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year, string.Join(" ", selectedBook.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", selectedBook.Genres.Select(g => g.Name).ToArray()));
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
                             }
                             else
                             {
@@ -264,43 +199,43 @@ namespace Module25.PLL.Views
 
                             if (selectedGenre != null)
                             {
-                                Console.WriteLine("Выбранный жанр:");
-                                Console.WriteLine("| {0, 4} | {1, 15} |", "ID", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 15} |", selectedGenre.Id, selectedGenre.Name);
-                                Console.WriteLine();
+                                commonView.Show_SelectedGenre(selectedGenre);
                             }
                             else
                             {
                                 AlertMessage.Show("Сначала следует выбрать жанр по ID");
                             }
 
-                            try
+                            if (selectedBook != null && selectedGenre != null)
                             {
-                                genreService.AddGenreToBook(selectedGenre, selectedBook);
-                                SuccessMessage.Show("Жанр " + selectedGenre.Name  + " успешно добавлен в книгу " + selectedBook.Title);
-                                selectedGenre = null;
-                                selectedBook = null;
-                            }
-
-                            catch (AlreadyExistsException)
-                            {
-                                AlertMessage.Show("В процессе добавления жанра в книгу произошла ошибка:\n" + selectedGenre?.Name + " уже является жанром книги " + selectedBook?.Title);
-                            }
-
-                            catch (NullReferenceException ex)
-                            {
-                                AlertMessage.Show("В процессе добавления жанра в книгу произошла ошибка:\n" + ex.Message);
-                            }
-
-                            catch (Exception ex)
-                            {
-                                if (ex.InnerException != null)
+                                try
                                 {
-                                    AlertMessage.Show("В процессе добавления жанра в книгу произошла ошибка:\n" + ex.InnerException.Message);
+                                    genreService.AddGenreToBook(selectedGenre, selectedBook);
+                                    SuccessMessage.Show("Жанр " + selectedGenre.Name + " успешно добавлен в книгу " + selectedBook.Title);
+                                    selectedGenre = null;
+                                    selectedBook = null;
                                 }
-                                else
+
+                                catch (AlreadyExistsException)
+                                {
+                                    AlertMessage.Show("В процессе добавления жанра в книгу произошла ошибка:\n" + selectedGenre?.Name + " уже является жанром книги " + selectedBook?.Title);
+                                }
+
+                                catch (NullReferenceException ex)
                                 {
                                     AlertMessage.Show("В процессе добавления жанра в книгу произошла ошибка:\n" + ex.Message);
+                                }
+
+                                catch (Exception ex)
+                                {
+                                    if (ex.InnerException != null)
+                                    {
+                                        AlertMessage.Show("В процессе добавления жанра в книгу произошла ошибка:\n" + ex.InnerException.Message);
+                                    }
+                                    else
+                                    {
+                                        AlertMessage.Show("В процессе добавления жанра в книгу произошла ошибка:\n" + ex.Message);
+                                    }
                                 }
                             }
                             break;
@@ -310,10 +245,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedBook != null)
                             {
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year, string.Join(" ", selectedBook.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", selectedBook.Genres.Select(g => g.Name).ToArray()));
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
                             }
                             else
                             {
@@ -322,43 +254,43 @@ namespace Module25.PLL.Views
 
                             if (selectedGenre != null)
                             {
-                                Console.WriteLine("Выбранный жанр:");
-                                Console.WriteLine("| {0, 4} | {1, 15} |", "ID", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 15} |", selectedGenre.Id, selectedGenre.Name);
-                                Console.WriteLine();
+                                commonView.Show_SelectedGenre(selectedGenre);
                             }
                             else
                             {
                                 AlertMessage.Show("Сначала следует выбрать жанр по ID");
                             }
 
-                            try
+                            if (selectedBook != null && selectedGenre != null)
                             {
-                                genreService.DelGenreFromBook(selectedGenre, selectedBook);
-                                SuccessMessage.Show("Жанр " + selectedGenre.Name + " успешно удален из книги " + selectedBook.Title);
-                                selectedGenre = null;
-                                selectedBook = null;
-                            }
-
-                            catch (ObjectNotFoundException)
-                            {
-                                AlertMessage.Show("В процессе удаления жанра из книги произошла ошибка:\n" + selectedGenre?.Name + " не является жанром книги " + selectedBook?.Title);
-                            }
-
-                            catch (NullReferenceException ex)
-                            {
-                                AlertMessage.Show("В процессе удаления жанра из книги произошла ошибка:\n" + ex.Message);
-                            }
-
-                            catch (Exception ex)
-                            {
-                                if (ex.InnerException != null)
+                                try
                                 {
-                                    AlertMessage.Show("В процессе удаления жанра из книги произошла ошибка:\n" + ex.InnerException.Message);
+                                    genreService.DelGenreFromBook(selectedGenre, selectedBook);
+                                    SuccessMessage.Show("Жанр " + selectedGenre.Name + " успешно удален из книги " + selectedBook.Title);
+                                    selectedGenre = null;
+                                    selectedBook = null;
                                 }
-                                else
+
+                                catch (ObjectNotFoundException)
+                                {
+                                    AlertMessage.Show("В процессе удаления жанра из книги произошла ошибка:\n" + selectedGenre?.Name + " не является жанром книги " + selectedBook?.Title);
+                                }
+
+                                catch (NullReferenceException ex)
                                 {
                                     AlertMessage.Show("В процессе удаления жанра из книги произошла ошибка:\n" + ex.Message);
+                                }
+
+                                catch (Exception ex)
+                                {
+                                    if (ex.InnerException != null)
+                                    {
+                                        AlertMessage.Show("В процессе удаления жанра из книги произошла ошибка:\n" + ex.InnerException.Message);
+                                    }
+                                    else
+                                    {
+                                        AlertMessage.Show("В процессе удаления жанра из книги произошла ошибка:\n" + ex.Message);
+                                    }
                                 }
                             }
                             break;

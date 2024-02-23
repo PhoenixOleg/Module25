@@ -12,7 +12,13 @@ namespace Module25.DAL.Repositories
 {
     public class GenreRepository
     {
-        public GenreEntity GetGenreByID(int id)
+
+        /// <summary>
+        /// Получение жанра по его ID
+        /// </summary>
+        /// <param name="id">ID жанра</param>
+        /// <returns>Экземпляр GenreEntity или null</returns>
+        public GenreEntity? GetGenreByID(int id)
         {
             using (var db = new ExtendedDBContext(false))
             {
@@ -21,6 +27,10 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Получение списка всех жанров
+        /// </summary>
+        /// <returns>Список экземпляров GenreEntity</returns>
         public List<GenreEntity> GetAllGenres()
         {
             using (var db = new ExtendedDBContext(false))
@@ -30,6 +40,12 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Добавление жанра в БД
+        /// </summary>
+        /// <param name="genreEntity">Экземпляр GenreEntity (с названием жанра)</param>
+        /// <returns>1 - жанр добавлен (количество обработанных строк); 
+        /// 0 - жанр не добавлен</returns>
         public int AddGenre(GenreEntity genreEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -39,6 +55,12 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Удаление жанра из БД
+        /// </summary>
+        /// <param name="genreEntity">Экземпляр GenreEntity</param>
+        /// <returns>1 - жанр удален (количество обработанных строк); 
+        /// 0 - жанр не удален</returns>
         public int DeleteGenre(GenreEntity genreEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -48,6 +70,13 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Добавление жанра в внигу
+        /// </summary>
+        /// <param name="genreEntity">Экземпляр GenreEntity</param>
+        /// <param name="bookExtendedEntity">Экземпляр BookExtendedEntity</param>
+        /// <returns>1 - жанр добавлен (количество обработанных строк); 
+        /// 0 - жанр не добавлен</returns>
         public int AddGenreToBook(GenreEntity genreEntity, BookExtendedEntity bookExtendedEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -58,6 +87,14 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Удаление жанра из внигу
+        /// </summary>
+        /// <param name="genreEntity">Экземпляр GenreEntity</param>
+        /// <param name="bookExtendedEntity">Экземпляр BookExtendedEntity</param>
+        /// <returns>1 - жанр удален (количество обработанных строк); 
+        /// 0 - жанр не удален</returns>
+        /// <exception cref="NullReferenceException">Не найдена книга или выбранная книга не относится к этому жанру</exception>
         public int RemoveGenreFromBook(GenreEntity genreEntity, BookExtendedEntity bookExtendedEntity)
         {
             using (var db = new ExtendedDBContext(false))

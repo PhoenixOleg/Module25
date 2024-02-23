@@ -2,6 +2,9 @@
 
 namespace Module25.BLL.Exceptions
 {
+    /// <summary>
+    /// Дата вне допустимого диапазона
+    /// </summary>
     public class DateOutOfRangeException : Exception
     {
         public DateOutOfRangeException()

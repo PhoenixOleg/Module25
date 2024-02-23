@@ -15,6 +15,7 @@ namespace Module25.PLL.Views
     {
         BookService bookService = new();
         UserService userService = new();
+        CommonView commonView = new();
 
         public void Show()
         {
@@ -28,23 +29,46 @@ namespace Module25.PLL.Views
                 Console.WriteLine("\tU. Получить список пользователей - нажмите U");
 
                 Console.WriteLine("\nОтчеты:");
-                Console.WriteLine("\t1. Получить список книг определенного жанра и вышедших между определенными годами - нажмите 1 In proc"); //@@@
+                Console.WriteLine("\t1. Получить список книг определенного жанра и вышедших между определенными годами - нажмите 1 In proc");
                 Console.WriteLine("\t2. Получить количество книг определенного автора в библиотеке - нажмите 2");
                 Console.WriteLine("\t3. Получить количество книг определенного жанра в библиотеке - нажмите 3");
                 Console.WriteLine("\t4. Есть ли книга определенного автора и с определенным названием в библиотеке - нажмите 4");
-                Console.WriteLine("\t5. Есть ли определенная книга на руках у пользователя - нажмите 5 In proc"); //@@@
+                Console.WriteLine("\t5. Есть ли определенная книга на руках у пользователя - нажмите 5 In proc");
                 Console.WriteLine("\t6. Получить количество книг на руках у пользователя - нажмите 6");
                 Console.WriteLine("\t7. Получение последней вышедшей книги - нажмите 7");
                 Console.WriteLine("\t8. Получение списка всех книг, отсортированного в алфавитном порядке по названию - нажмите 8");
                 Console.WriteLine("\t9. Получение списка всех книг, отсортированного в порядке убывания года их выхода - нажмите 9");
                 Console.WriteLine("\n0. Вернуться назад (нажмите 0)");
 
-                answer = Console.ReadLine();
+                answer = Console.ReadLine().ToUpper();
                 switch (answer)
                 {
+                    case "A":
+                        {
+                            commonView.Show_AllAuthors();
+                            break;
+                        }
+
+                    case "B":
+                        {
+                            commonView.Show_AllBooks(true);
+                            break;
+                        }
+
+                    case "G":
+                        {
+                            commonView.Show_AllGenres();
+                            break;
+                        }
+
+                    case "U":
+                        {
+                            commonView.Show_AllUsers();
+                            break;
+                        }
+
                     case "1": //Получить список книг определенного жанра и вышедших между определенными годами
                         {
-                            //@@@
                             GenreAddingData genreAddingData = new();
 
                             Console.Write("Введите название жанра: ");
@@ -72,7 +96,7 @@ namespace Module25.PLL.Views
                                 Console.SetWindowSize(180, Console.WindowHeight);
                                 Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
 
-                                foreach (Book book in bookService.GetBooksByGenrePubYear(genreAddingData, (beginDate, endDate)))
+                                foreach (Book book in bookService.ShowBooksByGenrePubYear(genreAddingData, (beginDate, endDate)))
                                     {
                                         Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", book.Id, book.Title, book.Description, book.PublicationDate.Year, string.Join(" ", book.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", book.Genres.Select(g => g.Name).ToArray()));
                                     }
@@ -307,7 +331,6 @@ namespace Module25.PLL.Views
 
                     case "7": //Получение последней вышедшей книги 
                         {
-                            //@@@ Проверить на отсутствие книг
                             try
                             {
                                 Console.SetWindowSize(180, Console.WindowHeight);
@@ -402,29 +425,5 @@ namespace Module25.PLL.Views
             }
             while (answer != "0");
         }
-
-        //public int InputID(string name)
-        //{
-        //    bool flag;
-        //    int id;
-                        
-        //    do
-        //    {
-        //        Console.Write("Введите ID " + name + ": ");
-        //        flag = int.TryParse(Console.ReadLine(), out id);
-                
-        //        if (id < 1) 
-        //        { 
-        //            flag = false; 
-        //        }
-                
-        //        if (!flag) 
-        //        {
-        //            Console.WriteLine("ID должен быть целым положительным числом. Попробуем еще раз");
-        //        }
-        //    }
-        //    while (flag == false);
-        //    return id;
-        //}
     }
 }

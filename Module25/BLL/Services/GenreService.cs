@@ -19,6 +19,11 @@ namespace Module25.BLL.Services
             genreRepository = new GenreRepository();
         }
 
+        /// <summary>
+        /// Метод возвращения списка всех жанров слоя BLL
+        /// </summary>
+        /// <returns>Список экземпляров Genre</returns>
+        /// <exception cref="NoOneObjectException">Список пуст</exception>
         public List<Genre> ShowAll()
         {
             List<Genre> genresList = new();
@@ -39,6 +44,12 @@ namespace Module25.BLL.Services
             return genresList;
         }
 
+        /// <summary>
+        /// Метод получения жанра по ID слоя BLL
+        /// </summary>
+        /// <param name="id">ID автора</param>
+        /// <returns>Экземпляр Genre</returns>
+        /// <exception cref="ObjectNotFoundException">Жанр не найден</exception>
         public Genre ShowByID(int id)
         {
             GenreEntity findGenre = genreRepository.GetGenreByID(id);
@@ -50,6 +61,13 @@ namespace Module25.BLL.Services
             return ConstructGenreModel(findGenre);
         }
 
+        /// <summary>
+        /// Метод добавления жанра в БД слоя BLL
+        /// </summary>
+        /// <param name="genreAddingData">Экземпляр GenreAddingData (название жанра)</param>
+        /// <exception cref="NameEmptyException">Название жанра не задано</exception>
+        /// <exception cref="AlreadyExistsException">Жанр уже существует в БД</exception>
+        /// <exception cref="Exception">Жанр не добавлен</exception>
         public void AddGenre(GenreAddingData genreAddingData)
         {
             if (string.IsNullOrEmpty(genreAddingData.Name) || string.IsNullOrWhiteSpace(genreAddingData.Name))
@@ -62,6 +80,7 @@ namespace Module25.BLL.Services
                 Name = genreAddingData.Name,
             };
 
+            //Не самый эффективный способ.
             var countGenres = (from GenreEntity item in genreRepository.GetAllGenres()
                                 where item.Name == genreAddingData.Name
                                 select item.Id
@@ -78,6 +97,12 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Метод удаления жанра в БД слоя BLL
+        /// </summary>
+        /// <param name="genre">Экземпляр Genre</param>
+        /// <exception cref="NoOneObjectException">Жанр не задан</exception>
+        /// <exception cref="Exception">Жанр не удален</exception>
         public void RemoveGenre(Genre? genre)
         {
             if (genre == null)
@@ -93,6 +118,14 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Метод добавления жанра в книгу слоя BLL
+        /// </summary>
+        /// <param name="genre">Экземпляр Genre</param>
+        /// <param name="book">Экземпляр Book</param>
+        /// <exception cref="NullReferenceException">Жанр или книга не заданы</exception>
+        /// <exception cref="AlreadyExistsException">Книга уже относится к этому жанру</exception>
+        /// <exception cref="Exception">Книга не добавлена в жанр</exception>
         public void AddGenreToBook(Genre genre, Book book)
         {
             if (genre == null)
@@ -133,6 +166,14 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Метод удаления жанра из книги слоя BLL
+        /// </summary>
+        /// <param name="genre">Экземпляр Genre</param>
+        /// <param name="book">Экземпляр Book</param>
+        /// <exception cref="NullReferenceException">Жанр или книга не заданы</exception>
+        /// <exception cref="ObjectNotFoundException">Книга не относится к этому жанру</exception>
+        /// <exception cref="Exception">Книга не удалена из жанра</exception>
         public void DelGenreFromBook(Genre genre, Book book)
         {
             if (genre == null)
@@ -170,6 +211,11 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Создание Genre из GenreEntity при возврате с уровня DAL
+        /// </summary>
+        /// <param name="genreEntity">Полученный экземпляр GenreEntity</param>
+        /// <returns>Экземпляр Genre</returns>
         public Genre ConstructGenreModel(GenreEntity genreEntity)
         {
             return new Genre(
@@ -179,6 +225,11 @@ namespace Module25.BLL.Services
                 );
         }
 
+        /// <summary>
+        /// Создание GenreEntity из Genre для передачи на уровень DAL
+        /// </summary>
+        /// <param name="genre">Передаваемый экземпляр Genre</param>
+        /// <returns>Экземпляр GenreEntity</returns>
         public GenreEntity ConvertToGenreEntity(Genre genre)
         {
             GenreEntity genreEntity = new()

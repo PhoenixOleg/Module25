@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Module25.DAL.Entities
 {
+    /// <summary>
+    /// Авторы книг
+    /// </summary>
     public class AuthorEntity
     {
         public int Id { get; set; }

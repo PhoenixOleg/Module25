@@ -10,6 +10,9 @@ namespace Module25.Task_25_2_4.BLL
 {
     public class CommonService
     {
+        /// <summary>
+        /// Метод создания первой (простой) БД и наполнение ее данными
+        /// </summary>
         public void CreateFirstDB() 
         {
             try

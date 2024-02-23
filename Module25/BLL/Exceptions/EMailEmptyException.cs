@@ -2,6 +2,9 @@
 
 namespace Module25.BLL.Exceptions
 {
+    /// <summary>
+    /// Не указан адрес электронной почты
+    /// </summary>
     public class EMailEmptyException : Exception
     {
         public EMailEmptyException()

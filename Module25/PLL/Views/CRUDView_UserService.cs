@@ -16,6 +16,7 @@ namespace Module25.PLL.Views
         UserService userService = new();
         BookService bookService = new();
 
+        CommonView commonView = new();
         public void Show()
         {
             string answer;
@@ -42,48 +43,20 @@ namespace Module25.PLL.Views
                 {
                     case "1": //Получить все книги
                         {
-                            try
-                            {
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                foreach (Book item in bookService.ShowAll_Extended())
-                                {
-                                    Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", item.Id, item.Title, item.Description, item.PublicationDate.Year, string.Join(" ", item.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", item.Genres.Select(g => g.Name).ToArray()));
-                                }
-                            }
-                            catch (NoOneObjectException)
-                            {
-                                AlertMessage.Show("Список книг пуст");
-                            }
-                            catch (Exception ex)
-                            {
-                                AlertMessage.Show("Возникла ошибка:\n" + ex.Message);
-                            }
-
+                            commonView.Show_AllBooks(true);
                             break;
                         }
 
                     case "2": //Получить (выбрать) книгу по ID
                         {
-                            bool flag;
-                            int id;
-
-                            do
-                            {
-                                Console.Write("Введите ID книги: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("книги");
 
                             selectedBook = null;
 
                             try
                             {
                                 selectedBook = bookService.ShowByID_Extended(id);
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year, string.Join(" ", selectedBook.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", selectedBook.Genres.Select(g => g.Name).ToArray()));
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
                             }
                             catch (ObjectNotFoundException)
                             {
@@ -99,43 +72,19 @@ namespace Module25.PLL.Views
 
                     case "3": //Вывод данных о всех пользователях
                         {
-                            try
-                            {
-                                List<User> users = userService.ShowAll();
-
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
-                                foreach (User item in users)
-                                {
-                                    Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", item.Id, item.Name, item.Email);
-                                }
-                                Console.WriteLine();
-                            }
-                            catch (Exception ex)
-                            {
-                                AlertMessage.Show("Возникла ошибка:\n" + ex.Message);
-                            }
+                            commonView.Show_AllUsers();
                             break;
                         }
 
                     case "4": //Вывод данных о пользователе (выбор пользователя) по ID
                         {
-                            bool flag;
-                            int id;
-
-                            do
-                            {
-                                Console.Write("Введите ID пользователя: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("пользователя");
 
                             selectedUser = null; //Сброс ранее выбранного пользователя на случай ошибки при выборе
                             try
                             {
                                 selectedUser = userService.ShowByID(id);
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", selectedUser.Id, selectedUser.Name, selectedUser.Email);
-                                Console.WriteLine();
+                                commonView.Show_SelectedUser(selectedUser);
                             }
                             catch (ObjectNotFoundException)
                             {
@@ -191,10 +140,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedUser != null)
                             {
-                                Console.WriteLine("Выбранный пользователь:");
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", selectedUser.Id, selectedUser.Name, selectedUser.Email);
-                                Console.WriteLine();
+                                commonView.Show_SelectedUser(selectedUser);
 
                                 bool flag = false;
                                 do
@@ -249,10 +195,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedBook != null)
                             {
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year, string.Join(" ", selectedBook.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", selectedBook.Genres.Select(g => g.Name).ToArray()));
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
                             }
                             else
                             {
@@ -261,42 +204,42 @@ namespace Module25.PLL.Views
 
                             if (selectedUser != null)
                             {
-                                Console.WriteLine("Выбранный пользователь:");
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", selectedUser.Id, selectedUser.Name, selectedUser.Email);
-                                Console.WriteLine();
+                                commonView.Show_SelectedUser(selectedUser);
                             }
                             else
                             {
                                 AlertMessage.Show("Сначала следует выбрать пользователя по ID");
                             }
 
-                            try
+                            if (selectedBook != null && selectedUser != null)
                             {
-                                userService.GiveBookToUser(selectedUser, selectedBook);
-                                SuccessMessage.Show("Клиенту " + selectedUser.Name + " (" + selectedUser.Email + ") успешно выдана в книга " + selectedBook.Title);
-                                selectedUser = null;
-                                selectedBook = null;
-                            }
-                            catch (AlreadyExistsException)
-                            {
-                                AlertMessage.Show("В процессе выдачи книги произошла ошибка:\n" + selectedUser?.Name + " (" + selectedUser?.Email + ") уже читает книгу " + selectedBook?.Title);
-                            }
-
-                            catch (NullReferenceException ex)
-                            {
-                                AlertMessage.Show("В процессе выдачи книги произошла ошибка:\n" + ex.Message);  
-                            }
-
-                            catch (Exception ex)
-                            {
-                                if (ex.InnerException != null)
+                                try
                                 {
-                                    AlertMessage.Show("В процессе выдачи книги произошла ошибка:\n" + ex.InnerException.Message);
+                                    userService.GiveBookToUser(selectedUser, selectedBook);
+                                    SuccessMessage.Show("Клиенту " + selectedUser.Name + " (" + selectedUser.Email + ") успешно выдана в книга " + selectedBook.Title);
+                                    selectedUser = null;
+                                    selectedBook = null;
                                 }
-                                else
+                                catch (AlreadyExistsException)
+                                {
+                                    AlertMessage.Show("В процессе выдачи книги произошла ошибка:\n" + selectedUser?.Name + " (" + selectedUser?.Email + ") уже читает книгу " + selectedBook?.Title);
+                                }
+
+                                catch (NullReferenceException ex)
                                 {
                                     AlertMessage.Show("В процессе выдачи книги произошла ошибка:\n" + ex.Message);
+                                }
+
+                                catch (Exception ex)
+                                {
+                                    if (ex.InnerException != null)
+                                    {
+                                        AlertMessage.Show("В процессе выдачи книги произошла ошибка:\n" + ex.InnerException.Message);
+                                    }
+                                    else
+                                    {
+                                        AlertMessage.Show("В процессе выдачи книги произошла ошибка:\n" + ex.Message);
+                                    }
                                 }
                             }
                             break;
@@ -306,10 +249,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedBook != null)
                             {
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year, string.Join(" ", selectedBook.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", selectedBook.Genres.Select(g => g.Name).ToArray()));
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
                             }
                             else
                             {
@@ -318,43 +258,43 @@ namespace Module25.PLL.Views
 
                             if (selectedUser != null)
                             {
-                                Console.WriteLine("Выбранный пользователь:");
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", selectedUser.Id, selectedUser.Name, selectedUser.Email);
-                                Console.WriteLine();
+                                commonView.Show_SelectedUser(selectedUser);
                             }
                             else
                             {
                                 AlertMessage.Show("Сначала следует выбрать пользователя по ID");
                             }
 
-                            try
+                            if (selectedBook != null && selectedUser != null)
                             {
-                                userService.GetBookFromUser(selectedUser, selectedBook);
-                                SuccessMessage.Show("Клиент " + selectedUser.Name + " (" + selectedUser.Email + ") успешно сдал книгу " + selectedBook.Title);
-                                selectedUser = null;
-                                selectedBook = null;
-                            }
-
-                            catch (ObjectNotFoundException)
-                            {
-                                AlertMessage.Show("В процессе возвращения книги в библиотеку произошла ошибка:\n" + "Клиент " + selectedUser?.Name + " (" + selectedUser?.Email + ") не является читателем книги " + selectedBook?.Title);
-                            }
-
-                            catch (NullReferenceException ex)
-                            {
-                                AlertMessage.Show("В процессе возвращения книги в библиотеку произошла ошибка:\n" + ex.Message);
-                            }
-
-                            catch (Exception ex)
-                            {
-                                if (ex.InnerException != null)
+                                try
                                 {
-                                    AlertMessage.Show("В процессе возвращения книги в библиотеку произошла ошибка:\n" + ex.InnerException.Message);
+                                    userService.GetBookFromUser(selectedUser, selectedBook);
+                                    SuccessMessage.Show("Клиент " + selectedUser.Name + " (" + selectedUser.Email + ") успешно сдал книгу " + selectedBook.Title);
+                                    selectedUser = null;
+                                    selectedBook = null;
                                 }
-                                else
+
+                                catch (ObjectNotFoundException)
                                 {
-                                    AlertMessage.Show("В процессе удаления автора из книги произошла ошибка:\n" + ex.Message);
+                                    AlertMessage.Show("В процессе возвращения книги в библиотеку произошла ошибка:\n" + "Клиент " + selectedUser?.Name + " (" + selectedUser?.Email + ") не является читателем книги " + selectedBook?.Title);
+                                }
+
+                                catch (NullReferenceException ex)
+                                {
+                                    AlertMessage.Show("В процессе возвращения книги в библиотеку произошла ошибка:\n" + ex.Message);
+                                }
+
+                                catch (Exception ex)
+                                {
+                                    if (ex.InnerException != null)
+                                    {
+                                        AlertMessage.Show("В процессе возвращения книги в библиотеку произошла ошибка:\n" + ex.InnerException.Message);
+                                    }
+                                    else
+                                    {
+                                        AlertMessage.Show("В процессе удаления автора из книги произошла ошибка:\n" + ex.Message);
+                                    }
                                 }
                             }
                             break;

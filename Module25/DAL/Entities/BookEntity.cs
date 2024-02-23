@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Module25.DAL.Entities
 {
+    /// <summary>
+    /// Книги без жанров и авторов (для задания 1)
+    /// </summary>
     public class BookEntity
     {
         public int Id { get; set; } //PrimaryKey

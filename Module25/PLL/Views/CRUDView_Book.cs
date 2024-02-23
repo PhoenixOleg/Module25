@@ -14,6 +14,7 @@ namespace Module25.PLL.Views
     public class CRUDView_Book
     {
         BookService bookService = new();
+        CommonView commonView = new();
 
         public void Show()
         {
@@ -35,43 +36,19 @@ namespace Module25.PLL.Views
                 {
                     case "1": //Вывод данных о всех книгах
                         {
-                            try
-                            {
-                                List<Book> books = bookService.ShowAll();
-
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", "ID", "Название", "Описание", "Год");
-                                foreach (Book item in books)
-                                {
-                                    Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", item.Id, item.Title, item.Description, item.PublicationDate.Year);
-                                }
-                                Console.WriteLine();
-                            }
-                            catch (Exception ex)
-                            {
-                                AlertMessage.Show("Возникла ошибка:\n" + ex.Message);
-                            }
+                            commonView.Show_AllBooks(false);
                             break;
                         }
 
                     case "2": //Вывод данных о книге (выбор книги) по ID
                         {
-                            bool flag;
-                            int id;
-
-                            do
-                            {
-                                Console.Write("Введите ID книги: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("книги");
 
                             selectedBook = null; //Сброс ранее выбранной книги на случай ошибки при выборе
                             try
                             {
                                 selectedBook = bookService.ShowByID(id);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", "ID", "Название", "Описание", "Год");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year );
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
                             }
                             catch (ObjectNotFoundException)
                             {
@@ -87,6 +64,7 @@ namespace Module25.PLL.Views
                     case "3": //Добавление книги
                         {
                             BookAddingData bookAddingData = new();
+
                             Console.Write("Введите название книги: ");
                             bookAddingData.Title = Console.ReadLine();
 
@@ -135,10 +113,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedBook != null)
                             {
-                                Console.WriteLine("Выбранная книга:");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", "ID", "Название", "Описание", "Год");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year);
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
 
                                 bool flag = false;
                                 do
@@ -191,15 +166,7 @@ namespace Module25.PLL.Views
 
                     case "5": //Удаление книги по ID
                         {
-                            bool flag;
-                            int id;
-
-                            do
-                            {
-                                Console.Write("Введите ID книги для удаления: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("книги для удаления");
 
                             try
                             {
@@ -227,15 +194,9 @@ namespace Module25.PLL.Views
                     case "6": //Изменение даты издания книги по ID
                         {
                             bool flag;
-                            int id;
                             DateOnly publicationDate;
 
-                            do
-                            {
-                                Console.Write("Введите ID книги для изменения даты издания: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("книги для изменения даты издания");
 
                             do
                             {

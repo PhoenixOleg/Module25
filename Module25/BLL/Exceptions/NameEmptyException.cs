@@ -2,6 +2,9 @@
 
 namespace Module25.BLL.Exceptions
 {
+    /// <summary>
+    /// Атрибут имени (названия) пуст (не задан) в объекте
+    /// </summary>
     public class NameEmptyException : Exception
     {
         public NameEmptyException()

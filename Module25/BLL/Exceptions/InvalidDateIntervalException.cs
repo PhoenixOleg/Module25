@@ -2,6 +2,9 @@
 
 namespace Module25.BLL.Exceptions
 {
+    /// <summary>
+    /// Некорректный интервал дат
+    /// </summary>
     public class InvalidDateIntervalException : Exception
     {
         public InvalidDateIntervalException()

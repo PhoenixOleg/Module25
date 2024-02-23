@@ -6,6 +6,10 @@ namespace SocialNetwork.PLL.Helpers
 {
     public static class SuccessMessage
     {
+        /// <summary>
+        /// Метод вывода сообщения о выполнении действия
+        /// </summary>
+        /// <param name="message">Текст сообщения</param>
         public static void Show(string message)
         {
             ConsoleColor originalColor = Console.ForegroundColor;

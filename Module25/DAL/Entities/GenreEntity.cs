@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Module25.DAL.Entities
 {
+    /// <summary>
+    /// Жанры
+    /// </summary>
     public class GenreEntity
     {
         public int Id { get; set; }

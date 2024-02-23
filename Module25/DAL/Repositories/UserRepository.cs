@@ -20,8 +20,8 @@ namespace Module25.DAL.Repositories
         /// Метод возвращает пользователя по его ID
         /// </summary>
         /// <param name="id">ID пользователя</param>
-        /// <returns>Экземпляр класса UserEntity</returns>
-        public UserEntity GetUserByID(int id)
+        /// <returns>Экземпляр класса UserEntity или null</returns>
+        public UserEntity? GetUserByID(int id)
         {
             using (var db = new BeginerDBContext(false))
             {
@@ -100,8 +100,8 @@ namespace Module25.DAL.Repositories
         /// <summary>
         /// Метод обновления имени пользователя по его ID
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="name"></param>
+        /// <param name="id">ID пользователя</param>
+        /// <param name="name">Новое имя пользователя</param>
         /// <returns>1 - если пользователь обновлен (количество обработанных строк); 
         /// 0 - пользователь не обновлен;
         /// -1 - не найден пользователь по id</returns>
@@ -123,6 +123,14 @@ namespace Module25.DAL.Repositories
             }
         }
 
+
+        /// <summary>
+        /// Метод получения книгм пользователем "на руки" (подписка на книгу)
+        /// </summary>
+        /// <param name="userExtendedEntity">Экземпляр класса UserExtendedEntity</param>
+        /// <param name="bookExtendedEntity">Экземпляр класса BookExtendedEntity</param>
+        /// <returns>1 - пользователь успешно подписался на книгу - пользователь добавлен в ее читатели (количество обработанных строк); 
+        /// 0 - пользователь не добавлен в читатели книги</returns>
         public int GiveBookToUser(UserExtendedEntity userExtendedEntity, BookExtendedEntity bookExtendedEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -133,6 +141,14 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Метод "сдачи" книги в библиотеку (отписка от книги)
+        /// </summary>
+        /// <param name="userExtendedEntity">Экземпляр класса UserExtendedEntity</param>
+        /// <param name="bookExtendedEntity">Экземпляр класса BookExtendedEntity</param>
+        /// <returns>1 - пользователь успешно отписался от книги - пользователь удален из ее читателей (количество обработанных строк); 
+        /// 0 - пользователь не удален из читателей книги</returns>
+        /// <exception cref="NullReferenceException">Не найдена книга или пользователь не подписан на нее</exception>
         public int GetBookFromUser(UserExtendedEntity userExtendedEntity, BookExtendedEntity bookExtendedEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -155,24 +171,33 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Есть ли определенная книга на руках у пользователя (наличие подписки по названию книги) Task 5
+        /// </summary>
+        /// <param name="bookExtendedEntity">Экземпляр класса BookExtendedEntity (название книги)</param>
+        /// <param name="userEntity">Экземпляр класса UserEntity (с eMail пользователя)</param>
+        /// <returns>true - пользователь подписан на книгу,
+        /// false - пользователь не подписан на книгу</returns>
         public bool HaveUserBookByTitle(BookExtendedEntity bookExtendedEntity, UserEntity userEntity)
         {
-            //Task 5 Есть ли определенная книга на руках у пользователя
             using (var db = new ExtendedDBContext(false))
             {
+                ///Можно сделать сначала проверку на наличие книги или книг по названию
                 BookExtendedEntity? book = db.Books.Where(b => b.Title == bookExtendedEntity.Title).FirstOrDefault();
-                var a = db.Users
+                return db.Users
                    .Include(b => b.Books)
                    .Where(u => u.Email == userEntity.Email)
                    .Any(b => b.Books.Contains(db.Books.Where(b => b.Title == bookExtendedEntity.Title).FirstOrDefault()));
-
-                return a;
             }
         }
 
+        /// <summary>
+        /// Получить количество книг на руках у пользователя (/Task 6)
+        /// </summary>
+        /// <param name="userEntity">>Экземпляр класса UserEntity (с eMail пользователя)</param>
+        /// <returns>Количество книг, на которые подписан пользователь</returns>
         public int GetBooksCountHasUser(UserEntity userEntity)
         {
-            //Task 6 Получить количество книг на руках у пользователя
             using (var db = new ExtendedDBContext(false))
             {
                 return db.Users.Include(b => b.Books)

@@ -14,6 +14,7 @@ namespace Module25.PLL.Views
     public class CRUDView_User
     {
         UserService userService = new();
+        CommonView commonView = new();
 
         public void Show()
         {
@@ -35,43 +36,19 @@ namespace Module25.PLL.Views
                 {
                     case "1": //Вывод данных о всех пользователях
                         {
-                            try
-                            {
-                                List<User> users = userService.ShowAll();
-
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
-                                foreach (User item in users)
-                                {
-                                    Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", item.Id, item.Name, item.Email);
-                                }
-                                Console.WriteLine();
-                            }
-                            catch (Exception ex)
-                            {
-                                AlertMessage.Show("Возникла ошибка:\n" + ex.Message);
-                            }
+                            commonView.Show_AllUsers();
                             break;
                         }
 
                     case "2": //Вывод данных о пользователе (выбор пользователя) по ID
                         {
-                            bool flag;
-                            int id;
-
-                            do
-                            {
-                                Console.Write("Введите ID пользователя: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("пользователя");
 
                             selectedUser = null; //Сброс ранее выбранного пользователя на случай ошибки при выборе
                             try
                             {
                                 selectedUser = userService.ShowByID(id);
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", selectedUser.Id, selectedUser.Name, selectedUser.Email);
-                                Console.WriteLine();
+                                commonView.Show_SelectedUser(selectedUser);
                             }
                             catch (ObjectNotFoundException)
                             {
@@ -127,10 +104,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedUser != null)
                             {
-                                Console.WriteLine("Выбранный пользователь:");
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", "ID", "Имя пользователя", "e-mail");
-                                Console.WriteLine("| {0, 4} | {1, 20} | {2, 20} |", selectedUser.Id, selectedUser.Name, selectedUser.Email);
-                                Console.WriteLine();
+                                commonView.Show_SelectedUser(selectedUser);
 
                                 bool flag = false;
                                 do
@@ -183,15 +157,7 @@ namespace Module25.PLL.Views
 
                     case "5": //Удаление пользователя по ID
                         {
-                            bool flag;
-                            int id;
-
-                            do
-                            {
-                                Console.Write("Введите ID пользователя для удаления: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("пользователя для удаления");
 
                             try
                             {
@@ -218,16 +184,9 @@ namespace Module25.PLL.Views
 
                     case "6": //Изменение имени пользователя по ID
                         {
-                            bool flag;
-                            int id;
                             string name;
 
-                            do
-                            {
-                                Console.Write("Введите ID пользователя для изменений имени: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("пользователя для изменений имени");
 
                             Console.Write("Введите новое имя пользователя: ");
                             name = Console.ReadLine();

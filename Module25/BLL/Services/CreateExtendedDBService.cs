@@ -11,6 +11,9 @@ namespace Module25.BLL.Services
 {
     public class CreateExtendedDBService
     {
+        /// <summary>
+        /// Создание расширеного контекста и заполнение тестовыми данными
+        /// </summary>
         public void CreateExtendedDB()
         {
             try

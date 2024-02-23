@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Module25.BLL.Models
 {
+    /// <summary>
+    /// Модель Пользователя для добавления в БД или поиска по eMail
+    /// </summary>
     public class UserRegistrationData
     {
         public string Name { get; set; }

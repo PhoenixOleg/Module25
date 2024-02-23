@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Module25.BLL.Exceptions
 {
+    /// <summary>
+    /// Не найдено ни одного объекта (список пуст)
+    /// </summary>
     public class NoOneObjectException : Exception
     {
         public NoOneObjectException()

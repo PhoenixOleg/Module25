@@ -9,6 +9,9 @@ namespace Module25.DAL.Entities
 {
     public class UserEntity
     {
+        /// <summary>
+        /// Пользователи (читатели) без списка читаемых книг
+        /// </summary>
         public int Id { get; set; } //PrimaryKey
         [Required]
         public string Name { get; set; } //Not NULL

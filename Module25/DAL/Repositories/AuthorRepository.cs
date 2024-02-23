@@ -13,7 +13,12 @@ namespace Module25.DAL.Repositories
 {
     public class AuthorRepository
     {
-        public AuthorEntity GetAuthorByID(int id)
+        /// <summary>
+        /// Получение автора по его ID
+        /// </summary>
+        /// <param name="id">ID автора (целое положительное число)</param>
+        /// <returns>Экземпляр AuthorEntity с найденным автором или null</returns>
+        public AuthorEntity? GetAuthorByID(int id)
         {
             using (var db = new ExtendedDBContext(false))
             {
@@ -22,6 +27,10 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// /Получение списка всех авторов
+        /// </summary>
+        /// <returns>Список экземпляров AuthorEntityс данным об авторах</returns>
         public List<AuthorEntity> GetAllAuthors()
         {
             using (var db = new ExtendedDBContext(false))
@@ -31,6 +40,12 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Добавление автора
+        /// </summary>
+        /// <param name="authorEntity">Экземпляр AuthorEntity с данными автора</param>
+        /// <returns>1 - если автор добавлен (количество обработанных строк); 
+        /// 0 - автор не добавлен</returns>
         public int AddAuthor(AuthorEntity authorEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -40,6 +55,12 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Удаление автора
+        /// </summary>
+        /// <param name="authorEntity">Экземпляр AuthorEntity с данными автора</param>
+        /// <returns>1 - если автор удален (количество обработанных строк); 
+        /// 0 - автор не удален</returns>
         public int DeleteAuthor(AuthorEntity authorEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -49,6 +70,13 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Добавление автора в книгу
+        /// </summary>
+        /// <param name="authorEntity">Экземпляр AuthorEntity с данными автора</param>
+        /// <param name="bookExtendedEntity">Экземпляр BookExtendedEntity с данными о книге</param>
+        /// <returns>1 - автор добавлен в книгу;
+        /// 0 - автор не добавлен в книгу</returns>
         public int AddAuthorToBook(AuthorEntity authorEntity, BookExtendedEntity bookExtendedEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -59,6 +87,14 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Удаление автора из книги
+        /// </summary>
+        /// <param name="authorEntity">Экземпляр AuthorEntity с данными автора</param>
+        /// <param name="bookExtendedEntity">Экземпляр BookExtendedEntity с данными о книге</param>
+        /// <returns>1 - автор удален из книги;
+        /// 0 - автор не удален из книги</returns>
+        /// <exception cref="NullReferenceException">Не найдена книга или автор в книге</exception>
         public int RemoveAuthorFromBook(AuthorEntity authorEntity, BookExtendedEntity bookExtendedEntity)
         {
             using (var db = new ExtendedDBContext(false))

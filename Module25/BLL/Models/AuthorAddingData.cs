@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Module25.BLL.Models
 {
+    /// <summary>
+    /// Модель объекта Автор для добавления автора в БД и поиска по ФИО автора.
+    /// </summary>
     public class AuthorAddingData
     {
         public string Name { get; set; }

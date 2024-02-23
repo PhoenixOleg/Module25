@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace Module25.DAL.Entities
 {
+    /// <summary>
+    /// Книги с авторами и жанрами
+    /// </summary>
     public class BookExtendedEntity
     {
         public int Id { get; set; } //PrimaryKey

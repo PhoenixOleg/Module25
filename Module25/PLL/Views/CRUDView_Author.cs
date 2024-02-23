@@ -18,6 +18,8 @@ namespace Module25.PLL.Views
         AuthorService authorService = new();
         BookService bookService = new();
 
+        CommonView commonView = new();
+
         public void Show()
         {
             string answer;
@@ -44,48 +46,20 @@ namespace Module25.PLL.Views
                 {
                     case "1": //Получить все книги
                         {
-                            try
-                            {
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                foreach (Book item in bookService.ShowAll_Extended())
-                                {
-                                    Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", item.Id, item.Title, item.Description, item.PublicationDate.Year, string.Join(" ", item.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", item.Genres.Select(g => g.Name).ToArray()));
-                                }
-                            }
-                            catch (NoOneObjectException)
-                            {
-                                AlertMessage.Show("Список книг пуст");
-                            }
-                            catch (Exception ex)
-                            {
-                                AlertMessage.Show("Возникла ошибка:\n" + ex.Message);
-                            }
-
+                            commonView.Show_AllBooks(true);
                             break;
                         }
 
                     case "2": //Получить (выбрать) книгу по ID
                         {
-                            bool flag;
-                            int id;
-
-                            do
-                            {
-                                Console.Write("Введите ID книги: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("книги");
 
                             selectedBook = null;
 
                             try
                             {
                                 selectedBook = bookService.ShowByID_Extended(id);
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year, string.Join(" ", selectedBook.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", selectedBook.Genres.Select(g => g.Name).ToArray()));
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
                             }
                             catch (ObjectNotFoundException)
                             {
@@ -101,51 +75,19 @@ namespace Module25.PLL.Views
 
                     case "3": //Получить всех авторов
                         {
-                            try
-                            {
-                                List<Author> authors = authorService.ShowAll();
-
-                                Console.WriteLine("Список авторов:");
-                                Console.WriteLine("| {0, 4} | {1, 15} | {2, 15} | {3, 15} |", "ID", "Имя автора", "Отчество автора", "Фамилия автора");
-                                foreach (Author item in authors)
-                                {
-                                    Console.WriteLine("| {0, 4} | {1, 15} | {2, 15} | {3, 15} |", item.Id, item.Name, item.MiddleName, item.SurName);
-                                }
-                                Console.WriteLine();
-                            }
-
-                            catch (NoOneObjectException)
-                            {
-                                AlertMessage.Show("Справочник авторов пуст");
-                            }
-
-                            catch (Exception ex)
-                            {
-                                AlertMessage.Show("Возникла ошибка:\n" + ex.Message);
-                            }
+                            commonView.Show_AllAuthors();
                             break;
                         }
 
                     case "4": //Получить (выбрать) автора по ID
                         {
-                            bool flag;
-                            int id;
-
-                            do
-                            {
-                                Console.Write("Введите ID автора: ");
-                                flag = int.TryParse(Console.ReadLine(), out id);
-                            }
-                            while (flag == false);
+                            int id = commonView.InputID("автора");
 
                             selectedAuthor = null;
                             try
                             {
                                 selectedAuthor = authorService.ShowByID(id);
-                                Console.WriteLine("Выбранный автор:");
-                                Console.WriteLine("| {0, 4} | {1, 15} | {2, 15} | {3, 15} |", "ID", "Имя автора", "Отчество автора", "Фамилия автора");
-                                Console.WriteLine("| {0, 4} | {1, 15} | {2, 15} | {3, 15} |", selectedAuthor.Id, selectedAuthor.Name, selectedAuthor.MiddleName, selectedAuthor.SurName);
-                                Console.WriteLine();
+                                commonView.Show_selectedAuthor(selectedAuthor);
                             }
                             catch (ObjectNotFoundException)
                             {
@@ -202,10 +144,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedAuthor != null)
                             {
-                                Console.WriteLine("Выбранный автор:");
-                                Console.WriteLine("| {0, 4} | {1, 15} | {2, 15} | {3, 15} |", "ID", "Имя автора", "Отчество автора", "Фамилия автора");
-                                Console.WriteLine("| {0, 4} | {1, 15} | {2, 15} | {3, 15} |", selectedAuthor.Id, selectedAuthor.Name, selectedAuthor.MiddleName, selectedAuthor.SurName);
-                                Console.WriteLine();
+                                commonView.Show_selectedAuthor(selectedAuthor);
 
                                 bool flag = false;
                                 do
@@ -260,10 +199,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedBook != null)
                             {
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year, string.Join(" ", selectedBook.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", selectedBook.Genres.Select(g => g.Name).ToArray()));
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
                             }
                             else
                             {
@@ -272,43 +208,43 @@ namespace Module25.PLL.Views
 
                             if (selectedAuthor != null)
                             {
-                                Console.WriteLine("Выбранный автор:");
-                                Console.WriteLine("| {0, 4} | {1, 15} | {2, 15} | {3, 15} |", "ID", "Имя автора", "Отчество автора", "Фамилия автора");
-                                Console.WriteLine("| {0, 4} | {1, 15} | {2, 15} | {3, 15} |", selectedAuthor.Id, selectedAuthor.Name, selectedAuthor.MiddleName, selectedAuthor.SurName);
-                                Console.WriteLine();
+                                commonView.Show_selectedAuthor(selectedAuthor);
                             }
                             else
                             {
                                 AlertMessage.Show("Сначала следует выбрать автора по ID");
                             }
 
-                            try
+                            if (selectedBook != null && selectedAuthor != null)
                             {
-                                authorService.AddAuthorToBook(selectedAuthor, selectedBook);
-                                SuccessMessage.Show("Автор " + selectedAuthor.Name + " " + selectedAuthor.SurName + " успешно добавлен в книгу " + selectedBook.Title);
-                                selectedAuthor = null;
-                                selectedBook = null;
-                            }
-
-                            catch (AlreadyExistsException)
-                            {
-                                AlertMessage.Show("В процессе добавления автора в книгу произошла ошибка:\n" + selectedAuthor?.Name + " " + selectedAuthor?.SurName + " уже является автором книги " + selectedBook?.Title);
-                            }
-
-                            catch (NullReferenceException ex)
-                            {
-                                AlertMessage.Show("В процессе добавления автора в книгу произошла ошибка:\n" + ex.Message);
-                            }
-
-                            catch (Exception ex)
-                            {
-                                if (ex.InnerException != null)
+                                try
                                 {
-                                    AlertMessage.Show("В процессе добавления автора в книгу произошла ошибка:\n" + ex.InnerException.Message);
+                                    authorService.AddAuthorToBook(selectedAuthor, selectedBook);
+                                    SuccessMessage.Show("Автор " + selectedAuthor.Name + " " + selectedAuthor.SurName + " успешно добавлен в книгу " + selectedBook.Title);
+                                    selectedAuthor = null;
+                                    selectedBook = null;
                                 }
-                                else
+
+                                catch (AlreadyExistsException)
+                                {
+                                    AlertMessage.Show("В процессе добавления автора в книгу произошла ошибка:\n" + selectedAuthor?.Name + " " + selectedAuthor?.SurName + " уже является автором книги " + selectedBook?.Title);
+                                }
+
+                                catch (NullReferenceException ex)
                                 {
                                     AlertMessage.Show("В процессе добавления автора в книгу произошла ошибка:\n" + ex.Message);
+                                }
+
+                                catch (Exception ex)
+                                {
+                                    if (ex.InnerException != null)
+                                    {
+                                        AlertMessage.Show("В процессе добавления автора в книгу произошла ошибка:\n" + ex.InnerException.Message);
+                                    }
+                                    else
+                                    {
+                                        AlertMessage.Show("В процессе добавления автора в книгу произошла ошибка:\n" + ex.Message);
+                                    }
                                 }
                             }
                             break;
@@ -318,10 +254,7 @@ namespace Module25.PLL.Views
                         {
                             if (selectedBook != null)
                             {
-                                Console.SetWindowSize(180, Console.WindowHeight);
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", "ID", "Название", "Описание", "Год", "Автор(ы)", "Жанр");
-                                Console.WriteLine("| {0, 4} | {1, 30} | {2, 40} | {3, 4} | {4, 50} | {5, 30} |", selectedBook.Id, selectedBook.Title, selectedBook.Description, selectedBook.PublicationDate.Year, string.Join(" ", selectedBook.Authors.Select(a => a.Surname + " " + a.Name + " " + a.MiddleName).ToArray()), string.Join(" ", selectedBook.Genres.Select(g => g.Name).ToArray()));
-                                Console.WriteLine();
+                                commonView.Show_SelectedBook(selectedBook);
                             }
                             else
                             {
@@ -330,43 +263,43 @@ namespace Module25.PLL.Views
 
                             if (selectedAuthor != null)
                             {
-                                Console.WriteLine("Выбранный автор:");
-                                Console.WriteLine("| {0, 4} | {1, 15} | {2, 15} | {3, 15} |", "ID", "Имя автора", "Отчество автора", "Фамилия автора");
-                                Console.WriteLine("| {0, 4} | {1, 15} | {2, 15} | {3, 15} |", selectedAuthor.Id, selectedAuthor.Name, selectedAuthor.MiddleName, selectedAuthor.SurName);
-                                Console.WriteLine();
+                                commonView.Show_selectedAuthor(selectedAuthor);
                             }
                             else
                             {
                                 AlertMessage.Show("Сначала следует выбрать автора по ID");
                             }
 
-                            try
+                            if (selectedBook != null && selectedAuthor != null)
                             {
-                                authorService.DelAuthorFromBook(selectedAuthor, selectedBook);
-                                SuccessMessage.Show("Автор " + selectedAuthor.Name + " " + selectedAuthor.SurName + " успешно удален из книги " + selectedBook.Title);
-                                selectedAuthor = null;
-                                selectedBook = null;
-                            }
-
-                            catch (ObjectNotFoundException)
-                            {
-                                AlertMessage.Show("В процессе удаления автора из книги произошла ошибка:\n" + selectedAuthor?.Name + " " + selectedAuthor?.SurName + " не является автором книги " + selectedBook?.Title);
-                            }
-
-                            catch (NullReferenceException ex)
-                            {
-                                AlertMessage.Show("В процессе удаления автора из книги произошла ошибка:\n" + ex.Message);
-                            }
-
-                            catch (Exception ex)
-                            {
-                                if (ex.InnerException != null)
+                                try
                                 {
-                                    AlertMessage.Show("В процессе удаления автора из книги произошла ошибка:\n" + ex.InnerException.Message);
+                                    authorService.DelAuthorFromBook(selectedAuthor, selectedBook);
+                                    SuccessMessage.Show("Автор " + selectedAuthor.Name + " " + selectedAuthor.SurName + " успешно удален из книги " + selectedBook.Title);
+                                    selectedAuthor = null;
+                                    selectedBook = null;
                                 }
-                                else
+
+                                catch (ObjectNotFoundException)
+                                {
+                                    AlertMessage.Show("В процессе удаления автора из книги произошла ошибка:\n" + selectedAuthor?.Name + " " + selectedAuthor?.SurName + " не является автором книги " + selectedBook?.Title);
+                                }
+
+                                catch (NullReferenceException ex)
                                 {
                                     AlertMessage.Show("В процессе удаления автора из книги произошла ошибка:\n" + ex.Message);
+                                }
+
+                                catch (Exception ex)
+                                {
+                                    if (ex.InnerException != null)
+                                    {
+                                        AlertMessage.Show("В процессе удаления автора из книги произошла ошибка:\n" + ex.InnerException.Message);
+                                    }
+                                    else
+                                    {
+                                        AlertMessage.Show("В процессе удаления автора из книги произошла ошибка:\n" + ex.Message);
+                                    }
                                 }
                             }
                             break;

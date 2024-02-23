@@ -19,6 +19,11 @@ namespace Module25.BLL.Services
             authorRepository = new AuthorRepository();
         }
 
+        /// <summary>
+        /// Метод возвращения списка всех авторов слоя BLL
+        /// </summary>
+        /// <returns>Список экземпляров Author</returns>
+        /// <exception cref="NoOneObjectException">Список пуст</exception>
         public List<Author> ShowAll()
         {
             List<Author> authorsList = new();
@@ -39,6 +44,12 @@ namespace Module25.BLL.Services
             return authorsList;
         }
 
+        /// <summary>
+        /// Метод получения автора по ID слоя BLL
+        /// </summary>
+        /// <param name="id">ID автора</param>
+        /// <returns>Экземпляр Author со сведениями об авторе</returns>
+        /// <exception cref="ObjectNotFoundException">Автор не найден</exception>
         public Author ShowByID(int id)
         {
             AuthorEntity findAuthor = authorRepository.GetAuthorByID(id);
@@ -50,6 +61,13 @@ namespace Module25.BLL.Services
             return ConstructAuthorModel(findAuthor);
         }
 
+        /// <summary>
+        /// Метод добавления автора в БД слоя BLL
+        /// </summary>
+        /// <param name="authorAddingData">Экзепляр модели AuthorAddingData (ФИО автора)</param>
+        /// <exception cref="NameEmptyException">Имя или фамилия пусты</exception>
+        /// <exception cref="AlreadyExistsException">Автор с такими ФИО уже присутствуетв БД (на практике надо добавлять еще страну автора, дату рождения для полной идентификации и т. п.)</exception>
+        /// <exception cref="Exception">Автор не был добавлен по иным причинам</exception>
         public void AddAuthor(AuthorAddingData authorAddingData)
         {
             if (string.IsNullOrEmpty(authorAddingData.Name) || string.IsNullOrWhiteSpace(authorAddingData.Name))
@@ -87,6 +105,12 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Метод удаления автора из БД слоя BL
+        /// </summary>
+        /// <param name="author">Экземпляр Author</param>
+        /// <exception cref="NoOneObjectException">Автор не задан</exception>
+        /// <exception cref="Exception">Автор не удален</exception>
         public void RemoveAuthor(Author? author)
         {
             if (author == null)
@@ -102,6 +126,14 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Метод добавления автора в книгу слоя BLL
+        /// </summary>
+        /// <param name="author">Экземпляр Author</param>
+        /// <param name="book">Экземпляр Book</param>
+        /// <exception cref="NullReferenceException">Автор или книга не заданы</exception>
+        /// <exception cref="AlreadyExistsException">Автор уже находится в списке писателей этой книги</exception>
+        /// <exception cref="Exception">Автор не добавлен</exception>
         public void AddAuthorToBook(Author author, Book book)
         {
             if (author == null)
@@ -114,7 +146,7 @@ namespace Module25.BLL.Services
                 throw new NullReferenceException("Книга не выбрана");
             }
 
-            if (book.Authors.Where(a => a.Id == author.Id).Any())
+            if (book.Authors.Any(a => a.Id == author.Id))
             {
                 throw new AlreadyExistsException();
             }
@@ -134,7 +166,7 @@ namespace Module25.BLL.Services
                 Description = book.Description,
                 PublicationDate = book.PublicationDate,
                 Title = book.Title,
-                Authors = new() // Иначе ошибка, если какой-то автор уже присутствует
+                Authors = new() // Иначе ошибка, если какой-то автор уже присутствует млм вообще этот атрибут здесь не трогать
                                 // The instance of entity type 'BookExtendedEntity' cannot be tracked because
                                 // another instance with the same key
                                 // value for {'Id'} is already being tracked.
@@ -147,6 +179,14 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Метод удаления автора из книги слоя BLL
+        /// </summary>
+        /// <param name="author">Автор или книга не заданы</param>
+        /// <param name="book">Экземпляр Book</param>
+        /// <exception cref="NullReferenceException">Автор или книга не заданы</exception>
+        /// <exception cref="ObjectNotFoundException">Автор не находится в списке писателей этой книги</exception>
+        /// <exception cref="Exception">Автор не удален</exception>
         public void DelAuthorFromBook(Author author, Book book)
         {
             if (author == null)
@@ -186,6 +226,11 @@ namespace Module25.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Создание Author из AuthorEntity при возврате с уровня DAL
+        /// </summary>
+        /// <param name="authorEntity">Полученный экземпляр AuthorEntity</param>
+        /// <returns>Экземпляр Author</returns>
         public Author ConstructAuthorModel(AuthorEntity authorEntity)
         {
             return new Author(
@@ -197,6 +242,11 @@ namespace Module25.BLL.Services
                 );
         }
 
+        /// <summary>
+        /// Создание AuthorEntity из Author для передачи на уровень DAL
+        /// </summary>
+        /// <param name="author">Передаваемый экземпляр Author</param>
+        /// <returns>Экземпляр AuthorEntity</returns>
         public AuthorEntity ConvertToAuthorEntity(Author author)
         {
             AuthorEntity authorEntity = new()

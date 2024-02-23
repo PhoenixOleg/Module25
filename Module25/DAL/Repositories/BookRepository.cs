@@ -18,11 +18,11 @@ namespace Module25.DAL.Repositories
     public class BookRepository
     {
         /// <summary>
-        /// Метод возвращает книгу по ее ID
+        /// Метод возвращает книгу по ее ID (без авторов и жанров)
         /// </summary>
         /// <param name="id">ID книги</param>
-        /// <returns>Экземпляр класса BookEntity</returns>
-        public BookEntity GetBookByID(int id)
+        /// <returns>Экземпляр класса BookEntity или null</returns>
+        public BookEntity? GetBookByID(int id)
         {
             using (var db = new BeginerDBContext(false))
             {
@@ -31,7 +31,12 @@ namespace Module25.DAL.Repositories
             }
         }
 
-        public BookExtendedEntity GetBookByID_Extended(int id)
+        /// <summary>
+        /// Метод возвращает книгу по ее ID c авторами и жанрами
+        /// </summary>
+        /// <param name="id">ID книги</param>
+        /// <returns>Экземпляр класса BookExtendedEntity или null</returns>
+        public BookExtendedEntity? GetBookByID_Extended(int id)
         {
             using (var db = new ExtendedDBContext(false))
             {
@@ -41,7 +46,7 @@ namespace Module25.DAL.Repositories
         }
 
         /// <summary>
-        /// Метод получения всех книг
+        /// Метод получения всех книг (без авторов и жанров)
         /// </summary>
         /// <returns>Список экземпляров класса BookEntity</returns>
         public List<BookEntity> GetAllBooks()
@@ -53,6 +58,10 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Метод получения всех книг c авторами и жанрами
+        /// </summary>
+        /// <returns>Список экземпляров класса BookExtendedEntity</returns>
         public List<BookExtendedEntity> GetAllBooks_Extended()
         {
             using (var db = new ExtendedDBContext(false))
@@ -119,10 +128,10 @@ namespace Module25.DAL.Repositories
         /// <summary>
         /// Метод обновления года издания книги по е ID
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="publicationDate"></param>
+        /// <param name="id">ID книги</param>
+        /// <param name="publicationDate">Новая дата издания книги</param>
         /// <returns>1 - если книга обновлена (количество обработанных строк); 
-        /// 0 - книга не обновлнеа;
+        /// 0 - книга не обновлнена;
         /// -1 - книга не найдена по id</returns>
         public int UpdateBookNameByID(int id, DateOnly publicationDate)
         {
@@ -142,6 +151,11 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Получение количества книга конкретного автора (соавтора) по ФИО
+        /// </summary>
+        /// <param name="authorEntity">Экземпляр класса AuthorEntity с данными об авторе (ФИО. ID не учитывается в этом методе)</param>
+        /// <returns>Количество найденных книг</returns>
         public int GetCountBooksByAuthor(AuthorEntity authorEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -153,6 +167,11 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Получение количества книга конкретного жанра
+        /// </summary>
+        /// <param name="genreEntity">Экземпляр класса GenreEntity (с названием жанра)</param>
+        /// <returns>Количество найденных книг</returns>
         public int GetCountBooksByGenre(GenreEntity genreEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -164,6 +183,14 @@ namespace Module25.DAL.Repositories
             }
         }
 
+
+        /// <summary>
+        /// Метод проверяет, есть ли книга с конкретным названием и ФИО автора (соавтора) в библиотеке
+        /// </summary>
+        /// <param name="authorEntity">Экземпляр класса AuthorEntity с данными об авторе (ФИО. ID не учитывается в этом методе)</param>
+        /// <param name="bookEntity">Экземпляр класса BookEntity (с названием  книги)</param>
+        /// <returns>true - книга найдена по названию и ФИО автора,
+        /// false - книга не найдена</returns>
         public bool IsBookByTitleAuthor(AuthorEntity authorEntity, BookEntity bookEntity)
         {
             using (var db = new ExtendedDBContext(false))
@@ -175,9 +202,12 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Получение последней вышедшей (изданной) книги (Task 7)
+        /// </summary>
+        /// <returns>Список экземпляров класса BookExtendedEntity (список книг)</returns>
         public List<BookExtendedEntity> GetLastPublishedBook()
         {
-            //Task 7 Получение последней вышедшей книги
             using (var db = new ExtendedDBContext(false))
             {
                 return db.Books.Where(b => b.PublicationDate == db.Books.Max(m => m.PublicationDate))
@@ -187,9 +217,12 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Получение списка всех книг, отсортированного в алфавитном порядке по названию (Task 8)
+        /// </summary>
+        /// <returns>Список экземпляров класса BookExtendedEntity (список книг)</returns>
         public List<BookExtendedEntity> GetAllBooksNameAsc()
         {
-            //Task 8 Получение списка всех книг, отсортированного в алфавитном порядке по названию 
             using (var db = new ExtendedDBContext(false))
             {
                 return db.Books.OrderBy(b => b.Title)
@@ -199,9 +232,12 @@ namespace Module25.DAL.Repositories
             }
         }
 
+        /// <summary>
+        /// Получение списка всех книг, отсортированного в порядке убывания года их выхода (Task 9)
+        /// </summary>
+        /// <returns>Список экземпляров класса BookExtendedEntity (список книг)</returns>
         public List<BookExtendedEntity> GetAllBooksPubDesc()
         {
-            //Task 9 Получение списка всех книг, отсортированного в порядке убывания года их выхода
             using (var db = new ExtendedDBContext(false))
             {
                 return db.Books.OrderByDescending(b => b.PublicationDate)
@@ -211,19 +247,16 @@ namespace Module25.DAL.Repositories
             }
         }
 
-        public List<BookExtendedEntity> GetBooksByGenrePubYear(GenreEntity genreEntity, (DateOnly beginDate, DateOnly endDate) dateInterval) //@@@ Task 1
+        /// <summary>
+        /// Получить список книг определенного жанра и вышедших между определенными годами (Task 1)
+        /// </summary>
+        /// <param name="genreEntity">Экземпляр класса GenreEntity (с названием жанра)</param>
+        /// <param name="dateInterval">Кортеж с интервалом дат.</param>
+        /// <returns>Список экземпляров класса BookExtendedEntity (список книг)</returns>
+        public List<BookExtendedEntity> GetBooksByGenrePubYear(GenreEntity genreEntity, (DateOnly beginDate, DateOnly endDate) dateInterval)
         {
             using (var db = new ExtendedDBContext(false))
             {
-                //Task 1 Получить список книг определенного жанра и вышедших между определенными годами
-                Debug.WriteLine(db.Books
-                    .Include(a => a.Authors)
-                    .Include(g => g.Genres)
-                    .Where(b => b.PublicationDate >= dateInterval.beginDate & b.PublicationDate < dateInterval.endDate)
-                    //.Include(g => g.Genres.Where(g => g.Name == genreEntity.Name)) //Она фильтрует список подгружаемых в книгу жанров но не фильтрует список книг
-                    .Where(book => book.Genres.Contains(db.Genres.Where(g => g.Name == genreEntity.Name).FirstOrDefault()))
-                    .ToQueryString());
-
                 return db.Books
                     .Include(a => a.Authors)
                     .Include(g => g.Genres)
@@ -231,6 +264,9 @@ namespace Module25.DAL.Repositories
                     //.Include(g => g.Genres.Where(g => g.Name == genreEntity.Name)) //Она фильтрует список подгружаемых в книгу жанров но не фильтрует список книг
                     .Where(book => book.Genres.Contains(db.Genres.Where(g => g.Name == genreEntity.Name).FirstOrDefault()))
                     .ToList();
+
+                #region Два варианта с SQL
+                //Долго не мог составить запрос EF поэтому стал пробовать прямой SQL. Убирать из кода этот кусок не стал
 
                 //SqlParameter pGenreName = new SqlParameter("@GenreName", genreEntity.Name);
                 //SqlParameter pBeginDate = new SqlParameter("@BeginDate", dateInterval.beginDate);
@@ -249,6 +285,7 @@ namespace Module25.DAL.Repositories
                 //        .Include(g => g.Genres)
                 //        .Include(a => a.Authors)
                 //        .ToList();
+                #endregion
             };
         }
     }
