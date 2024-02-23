@@ -22,7 +22,7 @@ namespace Module25.PLL.Views
             string answer;
             do
             {
-                Console.WriteLine("\nСправоченики:");
+                Console.WriteLine("\nСправочники:");
                 Console.WriteLine("\tA. Получить список авторов - нажмите A");
                 Console.WriteLine("\tB. Получить список книг - нажмите B");
                 Console.WriteLine("\tG. Получить список жанров - нажмите G");
